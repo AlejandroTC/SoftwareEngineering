@@ -1,0 +1,45 @@
+<title>Inicio de sesion</title>
+
+<script>
+  function validateForm(){
+    var x = document.forms["inicio"]["correo"].value;
+    var x1 = document.forms["inicio"]["clave"].value;
+
+      if(x==""|| x1==""){
+
+        alert("Campos incompletos");
+        return false;
+
+      }
+    }
+  </script>
+  
+<link rel="stylesheet" href="../css/inicio_sesion.css">
+<div  align="right">
+  &iquestNo tienes una cuenta? 
+<a href="registrarusuarios.html">  
+<input type="submit" value="Registrarse" >
+</a>
+</div>
+<hr>
+
+<div class="wrapper fadeInDown">
+  <div id="formContent">
+    <!-- Tabs Titles -->
+    <h2 class="active"> Iniciar sesion </h2>
+
+    <!-- Login Form -->
+    <form method="post" name="inicio" action="../php/validar_ingreso.php" onsubmit="return validateForm()">
+      <input type="text" id="login" class="fadeIn second" name="correo" placeholder="Correo">
+      <input type="password" id="password" class="fadeIn third" name="clave" placeholder="Contrasena">
+      <input type="submit" class="fadeIn fourth" value="Iniciar" >
+    </form>
+
+
+    <!-- Remind Passowrd -->
+    <div id="formFooter">
+      <a class="underlineHover" href="#">&iquestOlvidaste tu contrase&ntildea?</a>
+    </div>
+
+  </div>
+</div>
