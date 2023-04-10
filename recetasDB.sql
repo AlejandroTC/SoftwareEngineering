@@ -18,7 +18,7 @@ DROP SCHEMA IF EXISTS `recetasDB` ;
 CREATE SCHEMA IF NOT EXISTS `recetasDB` DEFAULT CHARACTER SET utf8 ;
 USE `recetasDB` ;
 
--- -----------------------------------------------------
+-- ---------------  --------------------------------------
 -- Table `recetasDB`.`ingredientes`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `recetasDB`.`ingredientes` ;
