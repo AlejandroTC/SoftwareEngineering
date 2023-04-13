@@ -11,7 +11,7 @@ let Addingre = document.getElementById("agregarin");
 Addingre.onclick = async function () {
     let NIName = document.getElementById("autocomplete-custom-append").value;
     const ing = `${NIName}.`;
-    if (ingres[ing]) {
+        if (ingres[ing]) {
         alert("El ingrediente ya existe");
         return;
     }
