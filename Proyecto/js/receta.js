@@ -188,6 +188,7 @@ async function DbIngredients() {
         await sendIngredient(ingrediente);
     }
     await obtenerIdIngrediente();
+    await insertRecipeIngredients();
 }
 
 //Funcion para leer los ingredientes de la BD y enviar si es que no esta
