@@ -1,7 +1,21 @@
 let ADDpro = document.getElementById("agregarpro");
-ADDpro.onclick = function () {
-    
+const pasos = {}; //Mapa de pasos para llevar control de los existentes
+ADDpro.onclick = async function () {
     let NStep = document.getElementById("nopaso").value;
+    //Comprobamos que el paso no exista ya
+    const paso = `${NStep}.`; //Creamos un arreglo con el paso
+    if (pasos[paso]) {
+        //comprobamos si el paso esta en el mapa de pasos
+        alert("El paso ya existe");
+        return;
+    }
+    pasos[paso] = true; // Agregar el paso al mapa
+    //Comprobar que se haya ingresado un numero en la cantidad y no texto
+    if (isNaN(NStep)) {
+        alert("Ingrese un número como cantidad");
+        return;
+    }
+    //Continuamos creando la tabla
     let Step = document.getElementById("paso").value;
     let Stepimg = document.getElementById("imgpaso");
     if (NStep.trim() === "" || Step.trim() === "") {

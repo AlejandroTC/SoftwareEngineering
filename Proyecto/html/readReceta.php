@@ -148,7 +148,7 @@ mysqli_close($conn);
 								<button type="button" class="btn btn-success">Agregar a planeación</button>
 							</div>
 							<div class="col-md-3 col-sm-3 " align="right">
-								<button type="button" class="btn btn-info" ><a href="updateReceta.php">Editar o eliminar receta </a></button>
+								<button type="button" class="btn btn-info" onclick="window.location.href='\\ComidayCompras/Proyecto/html/updateReceta.php';">Editar o eliminar receta </button>
 							</div>
 						</div>
 
@@ -198,41 +198,41 @@ mysqli_close($conn);
 						</form>
                     <!-- Tabs -->
 					<div id="wizard_verticle" class="form_wizard wizard_verticle">
-  <ul id="steps-list" class="list-unstyled wizard_steps">
-    <?php 
-      $cont=1;
-      echo "<li><a href=\"#step-$cont\" data-step=\"$cont\"><span class=\"step_no\">$cont</span></a></li>";
-      $cont++;
-      while($pasos = mysqli_fetch_assoc($resultadopasos)) {
-        echo "<li><a href=\"#step-$cont\" data-step=\"$cont\"><span class=\"step_no\">$cont</span></a></li>";
-        $cont++;
-      } 
-    ?>
-  </ul>
+						<ul id="steps-list" class="list-unstyled wizard_steps">
+							<?php 
+							$cont=1;
+							echo "<li><a href=\"#step-$cont\" data-step=\"$cont\"><span class=\"step_no\">$cont</span></a></li>";
+							$cont++;
+							while($pasos = mysqli_fetch_assoc($resultadopasos)) {
+								echo "<li><a href=\"#step-$cont\" data-step=\"$cont\"><span class=\"step_no\">$cont</span></a></li>";
+								$cont++;
+							} 
+							?>
+						</ul>
 
-  <?php 
-    $cont=1;
-    mysqli_data_seek($resultadopasos, 0); // reset the data pointer
-    while($pasos = mysqli_fetch_assoc($resultadopasos)) {
-      echo "<div id=\"step-$cont\">";
-      echo "<br>";
-      echo "<div class=\"col-md-6 col-sm-6\">";
-      echo "<h2 class=\"StepTitle\">Paso $cont</h2>";
-      echo "<p>{$pasos['paso']}</p>";
-      echo "</div>";
-      echo "<div class=\"col-md-6 col-sm-6\">";
-      echo "<div class=\"image view view-first\">";
-      echo "<img style=\"width: 100%; display: block;\" src=\"../img/$cont.png\" alt=\"image\" />";
-      echo "</div>";
-      echo "<br>";
-      echo "</div>";
-      echo "</div>";
-      $cont++;
-    } 
-  ?>
+						<?php 
+							$cont=1;
+							mysqli_data_seek($resultadopasos, 0); // reset the data pointer
+							while($pasos = mysqli_fetch_assoc($resultadopasos)) {
+							echo "<div id=\"step-$cont\">";
+								echo "<br>";
+								echo "<div class=\"col-md-6 col-sm-6\">";
+									echo "<h2 class=\"StepTitle\">Paso $cont</h2>";
+									echo "<p>{$pasos['paso']}</p>";
+								echo "</div>";
+								echo "<div class=\"col-md-6 col-sm-6\">";
+									echo "<div class=\"image view view-first\">";
+										echo "<img style=\"width: 100%; display: block;\" src=\"../img/$cont.png\" alt=\"image\" />";
+									echo "</div>";
+									echo "<br>";
+								echo "</div>";
+							echo "</div>";
+							$cont++;
+							} 
+						?>
 
-                <!-- End SmartWizard Content -->
-				</div>
+					<!-- End SmartWizard Content -->
+					</div>
                 </div>
               </div>
             </div>
@@ -242,11 +242,11 @@ mysqli_close($conn);
 
         <!-- footer content -->
         <footer>
-          <div class="pull-right">
-            Gentelella - Bootstrap Admin Template by <a href="https://colorlib.com">Colorlib</a>
-          </div>
-          <div class="clearfix"></div>
-        </footer>
+			<div class="pull-right">
+				© 2023 Desarrollado por METAS
+			</div>
+			<div class="clearfix"></div>
+		</footer>
         <!-- /footer content -->
       </div>
     </div>

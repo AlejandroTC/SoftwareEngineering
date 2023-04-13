@@ -156,18 +156,18 @@ mysqli_close($conn);
 											<label class="col-form-label col-md-12 col-sm-12 "></label>
 											<div class="col-md-6 col-sm-6 ">
                                                 <label for="fullname">Ingrediente</label>
-												<input type="text" class="form-control" placeholder="Levadura">
+												<input type="text" class="form-control" placeholder="Nombre del ingrediente">
                                                 <div class="form-group row">
                                                     <label class="col-form-label col-md-12 col-sm-12 "></label>
                                                     <div class="col-md-6 col-sm-6 ">
                                                         <label for="fullname">Cantidad</label>
-                                                        <input type="text" class="form-control" placeholder="10">
+                                                        <input type="text" class="form-control" placeholder="Cantidad del ingrediente">
                                                     </div>
                                                     <div class="col-md-6 col-sm-6 ">
                                                         <label for="fullname">Unidad de medida</label>
                                                         <select id="unidad_medida" class="form-control">
                                                             <option value="">Elige...</option>
-                                                            <option value="" selected>Gramos (gr.)</option>
+                                                            <option value="">Gramos (gr.)</option>
                                                             <option value="">Piezas (pzs)</option>
                                                             <option value="">Litros (l)</option>
                                                         </select>
@@ -185,7 +185,7 @@ mysqli_close($conn);
 											</div>
                                             <div class="col-md-6 col-sm-6 ">
                                                 <label for="fullname">Lista de ingredientes</label>
-												<table class="col-md-12 col-sm-12 " style="border: solid #84cc16; padding: 15px;">
+												<table class="col-md-12 col-sm-12 " style="padding: 15px;">
 													<tr>
 														<td class="col-md-1 col-sm-1"><i type="button" class="fa fa-times-circle-o" align="right" style="color: rgb(255, 0, 89);"></i></td>
 														<td class="col-md-11 col-sm-11" type="button">Huevo (3 piezas)</td>
@@ -213,7 +213,7 @@ mysqli_close($conn);
                                                 <div class="form-group row">
                                                     <div class="col-md-4 col-sm-4 ">
                                                         <label for="fullname">No. de paso</label>
-                                                        <input type="text" class="form-control" placeholder="3">
+                                                        <input type="text" class="form-control" placeholder="No. de paso">
                                                     </div>
                                                     <div class="col-md-8 col-sm-8 ">
                                                         <label for="fullname">Imagen de apoyo</label>
@@ -221,7 +221,7 @@ mysqli_close($conn);
                                                     </div>
                                                 </div>
                                                 <label for="fullname">Paso</label>
-												<textarea class="form-control" rows="2" placeholder="Mezcla hasta que todos los ingredientes se integren..."></textarea>
+												<textarea class="form-control" rows="2" placeholder="Explicación"></textarea>
                                                 
                                                 <div class="form-group row"></div>
                                                 <div class="form-group row">
@@ -235,20 +235,20 @@ mysqli_close($conn);
                                             
                                             <div class="col-md-6 col-sm-6 ">
                                                 <label for="fullname">Procedimiento</label>
-                                                <table class="col-md-12 col-sm-12 " style="border: solid #84cc16; padding: 15px;">
+                                                <table class="col-md-12 col-sm-12 " style="padding: 15px;">
 													<tr>
 														<td class="col-md-1 col-sm-1"><i type="button" class="fa fa-times-circle-o" align="right" style="color: rgb(255, 0, 89);"></i></td>
 														<td class="col-md-11 col-sm-11" type="button" >
 															1. En un recipiente de regular tamaño bate el azúcar con los huevos, puedes hacerlo a mano o utilizar una batidora eléctrica, el único requerimiento es hacerlo hasta que la mezcla crezca hasta casi el doble.
 															<br>
-															<img style="width: 30%; display: block;" src="../img/3.png" alt="image" />
+															<!-- <img style="width: 30%; display: block;" src="../img/3.png" alt="image" /> -->
 														</td>
 													</tr>
 													<tr>
 														<td class="col-md-1 col-sm-1"><i type="button" class="fa fa-times-circle-o" align="right" style="color: rgb(255, 0, 89);"></i></td>
 														<td class="col-md-11 col-sm-11" type="button">2. Agrega el aceite y luego el yogur.
 															<br>
-															<img style="width: 30%; display: block;" src="../img/3.png" alt="image" />
+															<!-- <img style="width: 30%; display: block;" src="../img/3.png" alt="image" /> -->
 														</td>
 												</table>
 											</div>
@@ -256,7 +256,7 @@ mysqli_close($conn);
 
                                         <div class="form-group row">
 											<div class="col-md-6 col-sm-6 ">
-                                                <label class="col-form-label col-md-3 col-sm-3 ">Duración</label>
+                                                <label class="col-form-label col-md-3 col-sm-3 ">Duración (min)</label>
                                                 <div class="col-md-9 col-sm-9 ">
                                                     <input type="text" name="duracion" class="form-control" placeholder="<?php echo $duracion; ?>">
                                                 </div>                               

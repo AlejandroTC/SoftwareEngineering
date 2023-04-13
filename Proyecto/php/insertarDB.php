@@ -14,17 +14,16 @@ try {
 	// Ejecutar la sentencia SQL en la base de datos
 	$resultado = $conn->query($sql);
 
-	if (empty($resultados)) {
-		// Si $resultados está vacío, enviamos una respuesta vacía
-		http_response_code(204); // Código HTTP 204 significa "No Content"
-	  } else {
-		// Si $resultados no está vacío, lo convertimos a JSON
-		$json = json_encode($resultados);
-		
-		// Enviar la respuesta como JSON
-		header('Content-Type: application/json');
-		echo $json;
-	  }
+	// Obtener los datos del resultado y convertirlos a un array asociativo
+	$datos = $resultado->fetchAll(PDO::FETCH_ASSOC);
+	
+	//file_put_contents('respuesta.json', $datos);
+	// Enviar respuesta al cliente en formato JSON
+	header('Content-Type: application/json');
+	echo json_encode($datos);
+
+	// Cerrar conexión a la base de datos
+	$conn = null;
 } catch(PDOException $e) {
 	echo "Error: " . $e->getMessage();
 }

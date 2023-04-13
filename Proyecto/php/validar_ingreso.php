@@ -23,8 +23,8 @@ if($filas)
 else{
     echo "<script>
         alert('Nombre de usuario o contraseña incorrectos');
+        window.location = '../html/index.html';
         </script>";
-        include("../html/index.html");
 }
 
 
