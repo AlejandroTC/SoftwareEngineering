@@ -24,7 +24,7 @@ USE `recetasDB` ;
 DROP TABLE IF EXISTS `recetasDB`.`ingredientes` ;
 
 CREATE TABLE IF NOT EXISTS `recetasDB`.`ingredientes` (
-  `idIngredientes` INT(11) NOT NULL,
+  `idIngredientes` INT(11) NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`idIngredientes`))
 ENGINE = InnoDB
@@ -43,6 +43,17 @@ CREATE TABLE IF NOT EXISTS `recetasDB`.`usuarios` (
   PRIMARY KEY (`correo`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
+
+--
+-- Dumping data for table `usuarios`
+--
+
+INSERT INTO `usuarios` (`correo`, `clave`, `nombre`) VALUES
+('usuario1@example.com', 'clave1', 'Nombre1'),
+('usuario2@example.com', 'clave2', 'Nombre2'),
+('usuario3@example.com', 'clave3', 'Nombre3');
+
+
 
 
 -- -----------------------------------------------------

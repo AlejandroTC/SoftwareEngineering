@@ -18,7 +18,7 @@ export class Receta {
         this.email = "";
         this.id = undefined;
     }
-    
+
     getName() {
         return this.name;
     }
@@ -60,6 +60,26 @@ export class Receta {
     }
     setEmail(email) {
         this.email = email;
+    }
+    getId() {
+        return this.id;
+    }
+    setId(recipeId) {
+        this.id = recipeId;
+    }
+}
+
+export class Ingrediente {
+    constructor() {
+        this.name = "";
+        this.id = undefined;
+    }
+
+    getName() {
+        return this.name;
+    }
+    setName(name) {
+        this.name = name;
     }
     getId() {
         return this.id;

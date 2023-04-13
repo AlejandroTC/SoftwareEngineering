@@ -1,15 +1,23 @@
 /*Documentacion del codigo
 El siguiente codigo se desarrolla con nomenclatura camelCase, que se usa para variables, funciones y propiedades
     CamelCase se refiere a escribir palabras juntas sin espacios y cada palabra después de la primera comienza con una letra mayúscula, por ejemplo: miVariableDeEjemplo.
+Hay que tener conocimiento de los terminos y funcionamiento de las promesas, funciones asincronas y por lo tanto async-await. Existen varios videos de esto, asi que dejo algunos:
+    Video de FastCode 40 minutos, pero realmente es muy facil de ver y entender https://www.youtube.com/watch?v=Q3HtXuDEy5s&t=1951s
+    Video de un man 10 minutos sencillo para entender lo basico de como funcionan https://www.youtube.com/watch?v=_1LK3dz2XsM
+    Video de Codely 30 minutos explican que es la asincronia, promesas y varias cosas mas, es un poco tedioso de ver pero se entienden los conceptos https://www.youtube.com/watch?v=XHw7D7Kb9MY
+Estoy usando tambien POO pues existen dos clases para objetos:
+    Receta: que contiene el nombre, duracion, id y todos sus atributos para que no se modifiquen por la ejecucion asincrona del codigo
+    Ingrediente: que contiene el nombre y el id de los ingredientes, se usa dos veces, para los ingredientes de la receta y para los ingredientes de la base de datos
 */
 import { Receta } from "./recetaclass.js"; //Clase receta para guardar datos
+import { Ingrediente } from "./recetaclass.js"; //Clase receta para guardar datos
 let addButton = document.getElementById("guardarreceta"); //Variable global para el boton receta agregar
 const receta = new Receta(); //Variable global para la instancia de la clase Receta
-
+const ingredientes = [];
+const ingredientesReceta = [];
 //Cuando se presione el boton guardar receta al final de la pagina
 addButton.onclick = function () {
     comprobarTablas();
-    
 };
 
 //Lectura de los datos ingresados en la receta para saber si estan completos o vacios para guardarlos en la clase posteriormente
@@ -65,7 +73,7 @@ function imprimirDatosReceta() {
 }
 
 //Leemos el correo de la sesion
-async function obtenerCorreo() {
+async function obtenerCorreo() {    
     const response = await fetch("../php/session.php");
     const data = await response.json();
     const user = data.correo;
@@ -159,14 +167,14 @@ async function DbIngredients() {
         const split = fila.split(" "); //Partimos la cadena donde existan ' '
         const indiceDe = split.indexOf("de"); //Obtenemos la posicion del "de"
         const ingrediente = split.slice(indiceDe + 1).join(" "); //De la posicion del primer "de" se obtiene la cadena de despues
+        //Guardamos en un arreglo los ingredientes de la receta
+        let ingredienteReceta = new Ingrediente();
+        ingredienteReceta.setName(ingrediente);
+        ingredientesReceta.push(ingredienteReceta);
+        //Comprobamos los ingredientes de la receta en la base de datos
         await sendIngredient(ingrediente);
-        for (let j = i + 1; j < texts.length; j++) {
-            //Checamos que no se repita el ingrediente en toda la lista para evitar dobles en DB
-            if (fila == texts[j]) {
-                i++;
-            }
-        }
     }
+    await obtenerIdIngrediente();
 }
 
 //Funcion para leer los ingredientes de la BD y enviar si es que no esta
@@ -177,7 +185,13 @@ async function sendIngredient(ingrediente) {
             //Guardar el contenido del JSON en data
             let ingre = data; //Pasar el contenido del data
             let nombres = ingre.map((obj) => obj.nombre); //Convertimos el contenido JSON de objeto => string, lista de ingredientes de la db
-            if (!nombres.includes(ingrediente)) {
+            ingre.forEach((obj) => {    //Para cada ingrediente
+                let ingredientedb = new Ingrediente();  //Creamos un objeto de Ingrediente, clase en recetaclass.js
+                ingredientedb.setId(obj.idIngredientes);    //Seteamos el id con el obtenido de la base de datos
+                ingredientedb.setName(obj.nombre);  //Seteamos el nombre con el obteeniodo de la base de datos
+                ingredientes.push(ingredientedb);   //Agregamos el ingrediente al arreglo de ingredientes de la base de datos
+            });
+            if (!nombres.includes(ingrediente)) {   //Si no existe en la base de datos el ingrediente
                 console.log("Ingrediente no existe en la BD");
                 fetch("../php/insertarDB.php", {
                     method: "POST",
@@ -185,7 +199,7 @@ async function sendIngredient(ingrediente) {
                         "Content-Type": "application/x-www-form-urlencoded",
                     },
                     body:
-                        'sql=INSERT INTO ingredientes (nombre) VALUES ("' +
+                        'sql=INSERT INTO ingredientes (nombre) VALUES ("' + //Lo insertamos en la base de datos
                         ingrediente +
                         '")',
                 })
@@ -194,7 +208,44 @@ async function sendIngredient(ingrediente) {
             }
         })
         .catch((error) => console.error(error));
+        
 }
+//Obtenemos los ids de los ingredientes de la receta, en este caso se guardan en ingredientesReceta
+//Sinceramente no se como funciona este codigo, pues al ser interpretado al momento de hacer debugg funciona pero 
+//No como lo pense la primera vez, pero funciona, aun asi lo intentare comentar un poco
+async function obtenerIdIngrediente() {
+    const promises = ingredientesReceta.map((ingrediente) => {  //Promesa para usar await al momento de pedir ejecucion
+        return new Promise((resolve, reject) => {
+            fetch("../php/insertarDB.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body:
+                    'sql=SELECT idIngredientes FROM ingredientes WHERE nombre="' +  //Buscamos el id de los ingredientes de la bd
+                    ingrediente.getName() +
+                    '";',
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    const ingredienteEncontrado = ingredientesReceta.find(  //Creamos una variable con todos los ingredientes para buscar por nombre
+                        (obj) => obj.getName() === ingrediente.getName()    //Buscamos en los datos que recibimos del fetch el nombre del ingrediente
+                    );
+                    if (ingredienteEncontrado) {    //Si lo encontramos
+                        let id = data[0].idIngredientes;    //Guardamos el id del ingrediente 
+                        ingredienteEncontrado.setId(id);    //Seteamos el id en la clase
+                    }
+                    resolve();
+                })
+                .catch((error) => reject(error));
+        });
+    });
+    await Promise.all(promises);    //Completar primero todas las promesas antes de continuar con la ejecucion del codigo
+}
+//----------------Pasos-----------------------
+
+
+
 //---------------------------Comprobaciones-----------------
 async function comprobarTablas() {
     //revisamos las tablas para saber si existen pasos e ingredientes

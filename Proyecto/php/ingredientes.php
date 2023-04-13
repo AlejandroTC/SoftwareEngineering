@@ -10,7 +10,7 @@ try {
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
   
     // Consulta SQL para recuperar los datos
-    $sql = "SELECT nombre FROM ingredientes";
+    $sql = "SELECT * FROM ingredientes";
     $stmt = $conn->prepare($sql);
     $stmt->execute();
 
