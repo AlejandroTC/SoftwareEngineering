@@ -1,28 +1,37 @@
-fetch("../php/ingredientes.php")
+fetch("../php/ingredientes.php") //Pedimos en la base de datos los ingredientes existentes
     .then((response) => response.json())
     .then((data) => {
-        let ingre = data;
-        let nombres = ingre.map((obj) => obj.nombre);
-        $("#autocomplete-custom-append").autocomplete({ lookup: nombres });
+        let ingre = data; //Guardamos los resultados de php
+        let nombres = ingre.map((obj) => obj.nombre); //Sacamos el nombre de los resultados
+        $("#autocomplete-custom-append").autocomplete({ lookup: nombres }); //Autocompletamos el campo
     })
     .catch((error) => console.error(error));
-const ingres = {};
-let Addingre = document.getElementById("agregarin");
+//Codigo para agregar a la tabla
+const ingres = {}; //Arreglo de ingredientes
+let Addingre = document.getElementById("agregarin"); //Definimos el boton
 Addingre.onclick = async function () {
+    //Al hacer click en el boton de agregar ingrediente
     let NIName = document.getElementById("autocomplete-custom-append").value;
-    const ing = `${NIName}.`;
-        if (ingres[ing]) {
-        alert("El ingrediente ya existe");
-        return;
+    //Chequeamos que no haya ingrtedientes duplicados
+    const ing = `${NIName}.`; //Creamos una variable para guardar el nombre
+    if (ingres[ing]) {
+        //Si el ingrediente existe en el arreglo de nombres de ingerdientes agregados en la receta
+        alert("El ingrediente ya existe"); //Error
+        return; //No continua y no agrega nada
     }
-    ingres[ing] = true; // Agregar el paso al mapa
-    let NIQuantity = document.getElementById("cantidad").value;
+    ingres[ing] = true; // Agregar el ingrediente al arreglo de ingredientes en la receta
+    //Continuamos con el codigo normal
+    let NIQuantity = document.getElementById("cantidad").value; //Guardamos la cantidad
+    //Chequeamos que la cantidad sea un numero y no una palabra, texto, etc
     if (isNaN(NIQuantity)) {
-        alert("Ingrese un número como cantidad");
-        return;
+        //Si la cantidad no es convertible a un numero, isNaN convierte a numeros y devuelve true o false si lo ha logrado
+        alert("Ingrese un número como cantidad"); //Alerta de que no es un numero
+        return; //No continua y no agrega nada
     } else {
-        let NIUnit = document.getElementById("unidad_medida").value;
+        //Continuamos con el codigo normal
+        let NIUnit = document.getElementById("unidad_medida").value; //Guardamos las unidades
         if (!NIName || !NIQuantity || !NIUnit) {
+            //Chequeamos que no hay nada sin llenar
             // Al menos una de las variables es vacía o nula
             alert("Por favor, complete todos los campos");
         } else {
@@ -57,6 +66,7 @@ function eliminarFila() {
     const tr = this.closest("tr");
     tr.remove();
 }
+//Limpiamos el formulario de los ingredientes
 function limpiaringre() {
     document.getElementById("autocomplete-custom-append").value = "";
     document.getElementById("cantidad").value = "";

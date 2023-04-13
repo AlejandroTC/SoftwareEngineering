@@ -1,11 +1,11 @@
 /*
-Este documento es para guardar la receta como objeto y poder almacenar y no modificar el 
-contenido de la misma a menos que sea necesario facilitando asi el uso de las 
-sentencias sql ya que todo esta aqui
+La clase "Receta" tiene un constructor con valores predeterminados para sus propiedades: nombre, duración, porción, tiempo, tipo, img, correo electrónico e identificador. También tiene métodos getter y setter para cada propiedad.
+La clase "Ingrediente" tiene un constructor con valores predeterminados para sus propiedades: nombre e identificador. También tiene métodos getter y setter para cada propiedad.
+Ambas clases se exportan para que puedan ser utilizadas en otros módulos.
 
-This document is to save the recipe as an object and be able to store it and not modify
-its content unless necessary, thus facilitating the use of sql statements since everything
-is here.
+The "Receta" class has a constructor with default values for its properties: name, duration, portion, time, type, img, email, and id. It also has getter and setter methods for each property.
+The "Ingrediente" class has a constructor with default values for its properties: name and id. It also has getter and setter methods for each property.
+Both classes are exported so they can be used in other modules.
 */
 export class Receta {
     constructor() {
@@ -72,6 +72,8 @@ export class Receta {
 export class Ingrediente {
     constructor() {
         this.name = "";
+        this.unit = "";
+        this.quantity = "";
         this.id = undefined;
     }
 
@@ -86,5 +88,17 @@ export class Ingrediente {
     }
     setId(recipeId) {
         this.id = recipeId;
+    }
+    getUnit() {
+        return this.unit;
+    }
+    setUnit(unit) {
+        this.unit = unit;
+    }
+    getQuantity() {
+        return this.quantity;
+    }
+    setQuantity(quantity) {
+        this.quantity = quantity;
     }
 }
