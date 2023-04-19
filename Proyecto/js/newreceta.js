@@ -13,6 +13,7 @@ ATC
 */
 import { Receta } from "./recetaclass.js"; //Clase receta para guardar datos
 import { Ingrediente } from "./recetaclass.js"; //Clase receta para guardar datos
+import { Paso } from "./recetaclass.js";
 let addButton = document.getElementById("guardarreceta"); //Variable global para el boton receta agregar
 const receta = new Receta(); //Variable global para la instancia de la clase Receta
 //Cuando se presione el boton guardar receta al final de la pagina
@@ -97,6 +98,7 @@ async function ingredientesReceta() {
         ingredienteReceta.setQuantity(quantity);
         receta.addIngredient(ingredienteReceta);
     }
+    await pasosReceta();
 }
 
 //Funcion para obtener los ingredientes de la tabla
@@ -109,11 +111,31 @@ async function pasosReceta() {
         const filaproce = textspro[i]; //Del array obtener la cadena de la posicion i
         const regex = /^Paso\s(\d+)\.\s(.+)\.$/; //Sintaxis de referencia Paso #. descripcion del paso.
         console.log(filaproce); //Debugg
-        //Si el texto coincide con la sintaxis de referencia, entonces no hay imagen
-        console.log("No imagen"); //Debugg
-        const partes = filaproce.match(regex); //Comparar las cadenas para saber las partes y separarlas
-        const numeroPaso = partes[1]; //Aqui se guarda el numero de paso
-        const descripcion = partes[2]; //Aqui se guarda la descripcion del paso
+        if (regex.test(filaproce)) {
+            //Si el texto coincide con la sintaxis de referencia, entonces no hay imagen
+            console.log("No imagen"); //Debugg
+            const partes = filaproce.match(regex); //Comparar las cadenas para saber las partes y separarlas
+            const numeroPaso = partes[1]; //Aqui se guarda el numero de paso
+            const descripcion = partes[2]; //Aqui se guarda la descripcion del paso
+            let paso = new Paso();
+            paso.setnumber(numeroPaso);
+            paso.setExplication(descripcion);
+            receta.addSteps(paso);
+        } else {
+            //Si no era igual a la sintexis entonces significa que tiene imagen y entonces hay que contemplar eso
+            console.log("Tiene imagen"); //Debugg
+            const partes = filaproce.match(regex); //Comparar las cadenas para saber las partes y separarlas
+            const numeroPaso = partes[1]; //Aqui se guarda el numero del paso
+            const descripcion = partes[2]; //Aqui se guarda la descripcion del paso
+            // Recuperar el objeto Blob de la tabla
+            const tdBlob = tr.getElementsByTagName("td")[2];
+            const blob = tdBlob.firstChild;
+            let paso = new Paso();
+            paso.setnumber(numeroPaso);
+            paso.setExplication(descripcion);
+            paso.setImg(blob);
+            receta.addSteps(paso);
+        }
     }
 }
 

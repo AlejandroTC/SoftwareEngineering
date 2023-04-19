@@ -18,6 +18,7 @@ export class Receta {
         this.email = "";
         this.id = undefined;
         this.ingredients = []; // Declarar una propiedad que sea un array vacío
+        this.steps = [];
     }
 
     getName() {
@@ -74,6 +75,14 @@ export class Receta {
 
     addIngredient(ingredient) {
         this.ingredients.push(ingredient);
+    }
+
+    getSteps() {
+        return this.steps;
+    }
+
+    addSteps(step) {
+        this.steps.push(step);
     }
 }
 
