@@ -50,7 +50,11 @@ ADDpro.onclick = async function () {
     } else {
         let nameimg = Stepimg.files[0];
         let namestepimg = nameimg.name;
-        //agregar valores a la tabla de listado de ingredientes con el icono para eliminar
+
+        // Convertir la imagen en un objeto Blob
+        let blob = new Blob([nameimg], { type: nameimg.type });
+
+        // agregar valores a la tabla de listado de ingredientes con el icono para eliminar
         let inicio = "Paso ";
         let explicacion = inicio + NStep + ". " + Step + ". " + namestepimg; //Encadenamos para formar el texto a plasmar
         const tr = document.createElement("tr"); //Creamos el TR
@@ -67,8 +71,15 @@ ADDpro.onclick = async function () {
         let txt = document.createTextNode(explicacion); //Inicializamos un nodo con el texto a plasmar
         tdtext.appendChild(txt); //Agregamos el textro al TD
         tdRemove.appendChild(icon); //Agregamos el icono al TD
+
+        // Agregar el objeto Blob a la tabla
+        const tdBlob = document.createElement("td");
+        tdBlob.style.display = "none";
+        tdBlob.appendChild(blob);
+
         tr.appendChild(tdRemove); //Agregamos el TD al TR
         tr.appendChild(tdtext); //Agregamos el TD al TR
+        tr.appendChild(tdBlob); // Agregamos el objeto Blob al TR
 
         const tbody = document
             .getElementById("procedimiento")

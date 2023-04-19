@@ -17,6 +17,7 @@ export class Receta {
         this.img = "";
         this.email = "";
         this.id = undefined;
+        this.ingredients = []; // Declarar una propiedad que sea un array vacío
     }
 
     getName() {
@@ -67,6 +68,13 @@ export class Receta {
     setId(recipeId) {
         this.id = recipeId;
     }
+    getIngredients() {
+        return this.ingredients;
+    }
+
+    addIngredient(ingredient) {
+        this.ingredients.push(ingredient);
+    }
 }
 
 export class Ingrediente {
@@ -100,5 +108,37 @@ export class Ingrediente {
     }
     setQuantity(quantity) {
         this.quantity = quantity;
+    }
+}
+
+export class Paso {
+    constructor() {
+        this.number = "";
+        this.explication = "";
+        this.img = "";
+    }
+
+    getnumber() {
+        return this.number;
+    }
+
+    setnumber(number) {
+        this.number = number;
+    }
+
+    getExplication() {
+        return this.explication;
+    }
+
+    setExplication(explication) {
+        this.explication = explication;
+    }
+
+    getImg() {
+        return this.img;
+    }
+
+    setImg(img) {
+        this.img = img;
     }
 }
