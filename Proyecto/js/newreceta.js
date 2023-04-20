@@ -137,6 +137,33 @@ async function pasosReceta() {
             receta.addSteps(paso);
         }
     }
+    await imprimirDatosReceta();
+}
+
+//Comprobar los datos de la receta, es con fines de debugin
+async function imprimirDatosReceta() {
+    console.log("Name:", receta.getName());
+    console.log("Duration:", receta.getDuration());
+    console.log("Portion:", receta.getPortion());
+    console.log("Time:", receta.getTime());
+    console.log("Type:", receta.getType());
+    console.log("Image:", receta.getImage());
+    console.log("Email:", receta.getEmail());
+    console.log("ID:", receta.getId());
+
+    console.log("Ingredients:");
+    for (const ingrediente of receta.getIngredients()) {
+        console.log(
+            `\tName: ${ingrediente.getName()}, Quantity: ${ingrediente.getQuantity()}, Unit: ${ingrediente.getUnit()}`
+        );
+    }
+
+    console.log("Steps:");
+    for (const paso of receta.getSteps()) {
+        console.log(
+            `\tNumber: ${paso.getnumber()}, Explication: ${paso.getExplication()}, Image: ${paso.getImg()}`
+        );
+    }
 }
 
 //Revisamos las tablas para saber si existen pasos e ingredientes
