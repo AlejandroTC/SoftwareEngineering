@@ -19,7 +19,6 @@ Addingre.onclick = async function () {
         alert("El ingrediente ya existe"); //Error
         return; //No continua y no agrega nada
     }
-    ingres[ing] = true; // Agregar el ingrediente al arreglo de ingredientes en la receta
     //Continuamos con el codigo normal
     let NIQuantity = document.getElementById("cantidad").value; //Guardamos la cantidad
     //Chequeamos que la cantidad sea un numero y no una palabra, texto, etc
@@ -28,6 +27,8 @@ Addingre.onclick = async function () {
         alert("Ingrese un número como cantidad"); //Alerta de que no es un numero
         return; //No continua y no agrega nada
     } else {
+        ingres[ing] = true; // Agregar el ingrediente al arreglo de ingredientes en la receta
+
         //Continuamos con el codigo normal
         let NIUnit = document.getElementById("unidad_medida").value; //Guardamos las unidades
         if (!NIName || !NIQuantity || !NIUnit) {

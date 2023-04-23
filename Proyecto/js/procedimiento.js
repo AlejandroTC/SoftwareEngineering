@@ -9,7 +9,6 @@ ADDpro.onclick = async function () {
         alert("El paso ya existe");
         return;
     }
-    pasos[paso] = true; // Agregar el paso al mapa
     //Comprobar que se haya ingresado un numero en la cantidad y no texto
     if (isNaN(NStep)) {
         alert("Ingrese un número como cantidad");
@@ -22,6 +21,7 @@ ADDpro.onclick = async function () {
         // Al menos una de las variables es vacía o nula
         alert("Por favor, complete todos los campos");
     } else if (Stepimg.files.length === 0) {
+        pasos[paso] = true; // Agregar el paso al mapa
         //agregar valores a la tabla de listado de ingredientes con el icono para eliminar
         let inicio = "Paso ";
         let explicacion = inicio + NStep + ". " + Step + "."; //Encadenamos para formar el texto a plasmar
@@ -48,6 +48,7 @@ ADDpro.onclick = async function () {
             .appendChild(tr); //Agragamos al TBody ambos TR
         limpiar();
     } else {
+        pasos[paso] = true; // Agregar el paso al mapa
         let nameimg = Stepimg.files[0];
         let namestepimg = nameimg.name;
 
