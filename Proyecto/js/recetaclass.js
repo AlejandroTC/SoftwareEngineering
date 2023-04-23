@@ -103,8 +103,8 @@ export class Ingrediente {
     getId() {
         return this.id;
     }
-    setId(recipeId) {
-        this.id = recipeId;
+    setId(ingredientId) {
+        this.id = ingredientId;
     }
     getUnit() {
         return this.unit;

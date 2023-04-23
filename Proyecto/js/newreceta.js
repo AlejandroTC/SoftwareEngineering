@@ -15,7 +15,8 @@ import { Receta } from "./recetaclass.js"; //Clase receta para guardar datos
 import { Ingrediente } from "./recetaclass.js"; //Clase receta para guardar datos
 import { Paso } from "./recetaclass.js";
 let addButton = document.getElementById("guardarreceta"); //Variable global para el boton receta agregar
-const receta = new Receta(); //Variable global para la instancia de la clase Receta
+const receta = new Receta(); //Constante global para la instancia de la clase Receta
+const ingredientes = []; //Constante para guardar los ingredientes existentes en la base de datos
 //Cuando se presione el boton guardar receta al final de la pagina
 addButton.onclick = function () {
     comprobarTablas();
@@ -31,19 +32,6 @@ async function leerDatosReceta() {
     const rType = document.getElementById("rtipo").value;
     const rImg = document.getElementById("rimg").files[0];
     const email = await obtenerCorreo();
-    //Comprobamos si estan completos
-    if (
-        rName == "" ||
-        rDuration == "" ||
-        rPortion == "" ||
-        rTime == "" ||
-        rType == "" ||
-        rImg.files.length === 0
-    ) {
-        //No estan completos
-        alert("Por favor, complete todos los campos y seleccione una imagen.");
-        return;
-    }
     // Creamos un objeto FileReader
     const reader = new FileReader();
     // Leemos el contenido del archivo
@@ -61,6 +49,22 @@ async function leerDatosReceta() {
         receta.setImage(blob);
         receta.setEmail(email);
     };
+    //Comprobamos si estan completos
+    if (
+        rName == "" ||
+        rDuration == "" ||
+        rPortion == "" ||
+        rTime == "" ||
+        rType == "" ||
+        rImg === undefined || 
+        rImg == null || 
+        rImg.name === ""
+    ) {
+        //No estan completos
+        alert("Por favor, complete todos los campos y seleccione una imagen.");
+        return;
+    }
+    
     await ingredientesReceta();
 }
 //Leemos el correo de la sesion
@@ -137,7 +141,8 @@ async function pasosReceta() {
             receta.addSteps(paso);
         }
     }
-    await imprimirDatosReceta();
+    await imprimirDatosReceta(); //Debug
+    await addRecipe();
 }
 
 //Comprobar los datos de la receta, es con fines de debugin
@@ -164,6 +169,124 @@ async function imprimirDatosReceta() {
             `\tNumber: ${paso.getnumber()}, Explication: ${paso.getExplication()}, Image: ${paso.getImg()}`
         );
     }
+}
+
+//Enviar receta a la base de datos
+async function addRecipe() {
+    let rName = receta.getName();
+    let rDuration = receta.getDuration();
+    let rTime = receta.getTime();
+    let rType = receta.getType();
+    let rPortion = receta.getPortion();
+    let rimg = receta.getImage();
+    let correo = receta.getEmail();
+    fetch("../php/insertarDB.php", {
+        //Peticion php para guardar cosas en DB
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        //Sentencia para enviar la receta
+        body:
+            'sql=INSERT INTO recetas (nombre, duracion, tiempo_comida, tiempo_receta, porciones, imagen, usuarios_correo) VALUES ("' +
+            rName +
+            '", "' +
+            rDuration +
+            '", "' +
+            rTime +
+            '", "' +
+            rType +
+            '", "' +
+            rPortion +
+            '", "' +
+            rimg +
+            '", "' +
+            correo +
+            '")',
+    })
+        .then((response) => console.log("Se añadio la receta")) //Mostrar en la consola que se añadio
+        .catch((error) => console.error(error)); //Mostrar el error si es que hubo
+    setTimeout(function() {
+        console.log("Después de 2 segundos");
+        }, 2000);
+    let idReceta = await obtenerIdReceta();
+    console.log(idReceta); //Dubug
+    receta.setId(idReceta);
+    await sendIngredient();
+}
+
+//Obtener el id de la receta
+async function obtenerIdReceta() {
+    let rName = receta.getName();
+    let rDuration = receta.getDuration();
+    let rTime = receta.getTime();
+    let rType = receta.getType();
+    let correo = receta.getEmail();
+
+    return new Promise((resolve, reject) => {
+        fetch("../php/insertarDB.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body:
+                'sql=SELECT idRecetas FROM recetas WHERE nombre="' +
+                rName +
+                '" AND duracion="' +
+                rDuration +
+                '" AND tiempo_comida="' +
+                rTime +
+                '" AND tiempo_receta="' +
+                rType +
+                '" AND Usuarios_correo="' +
+                correo +
+                '";',
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                resolve(parseInt(data[0].idRecetas));
+            })
+            .catch((error) => reject(error));
+    });
+}
+
+//Enviar ingredientes a la base de datos
+async function sendIngredient() {
+    const ingredientesReceta = receta.getIngredients();
+    return fetch("../php/ingredientes.php") //Consulta a la DB por todos los ingredientes
+        .then((response) => response.json()) //Obtenemos respuesta en JSON
+        .then((data) => {
+            //Guardar el contenido del JSON en data
+            let ingre = data; //Pasar el contenido del data
+            let nombres = ingre.map((obj) => obj.nombre); //Convertimos el contenido JSON de objeto => string, lista de ingredientes de la db
+            ingre.forEach((obj) => {
+                //Para cada ingrediente
+                let ingredientedb = new Ingrediente(); //Creamos un objeto de Ingrediente, clase en recetaclass.js
+                ingredientedb.setId(obj.idIngredientes); //Seteamos el id con el obtenido de la base de datos
+                ingredientedb.setName(obj.nombre); //Seteamos el nombre con el obteeniodo de la base de datos
+                ingredientes.push(ingredientedb); //Agregamos el ingrediente al arreglo de ingredientes de la base de datos
+            });
+            ingredientesReceta.forEach(ingrediente => {
+                if (!nombres.includes(ingrediente)) {
+                    //Si no existe en la base de datos el ingrediente
+                    console.log("Ingrediente no existe en la BD");
+                    fetch("../php/insertarDB.php", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                        },
+                        body:
+                            'sql=INSERT INTO ingredientes (nombre) VALUES ("' + //Lo insertamos en la base de datos
+                            ingrediente +
+                            '")',
+                    })
+                        .then((response) => console.log(response))
+                        .catch((error) => console.error(error));
+                }
+            });
+        })
+        .catch((error) => console.error(error));
 }
 
 //Revisamos las tablas para saber si existen pasos e ingredientes
