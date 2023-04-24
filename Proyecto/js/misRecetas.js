@@ -2,7 +2,7 @@ import { Receta } from "./recetaclass.js";
 const recetas = []; //Para guardar las recetas
 const email = await obtenerCorreo();
 
-fetch("../php/insertarDB.php", {
+fetch("../php/misRecetas.php", {
     method: "POST",
     headers: {
         "Content-Type": "application/x-www-form-urlencoded"
@@ -14,6 +14,7 @@ fetch("../php/insertarDB.php", {
 })
     .then((response) => response.json())
     .then((data) => {
+        console.log(data);
         data.forEach((obj) => {
             const receta = new Receta();
             receta.setName(obj.nombre);
@@ -39,6 +40,7 @@ async function obtenerCorreo() {
 function imprimirRecetas() {
     const contenedorRecetas = document.getElementById("contenedor-recetas");
     recetas.forEach((receta) => {
+
         const divCol = document.createElement("div");
         divCol.classList.add("col-md-4", "col-sm-4");
 
@@ -51,7 +53,7 @@ function imprimirRecetas() {
         const img = document.createElement("img");
         img.style.width = "100%";
         img.style.display = "block";
-        img.src = receta.imagen;
+        img.src = "data:image/png;base64," + receta.getImage();
         img.alt = "imagen de la receta";
 
         const divMask = document.createElement("div");
@@ -84,7 +86,7 @@ function imprimirRecetas() {
 
         const pTitulo = document.createElement("p");
         const strongTitulo = document.createElement("strong");
-        strongTitulo.textContent = receta.titulo;
+        strongTitulo.textContent = receta.getName();
         pTitulo.appendChild(strongTitulo);
         divCaption.appendChild(pTitulo);
 
