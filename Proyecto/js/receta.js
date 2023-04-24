@@ -13,13 +13,16 @@ ATC
 */
 import { Receta } from "./recetaclass.js"; //Clase receta para guardar datos
 import { Ingrediente } from "./recetaclass.js"; //Clase receta para guardar datos
+import { pasosBlob } from "./procedimiento.js";
 let addButton = document.getElementById("guardarreceta"); //Variable global para el boton receta agregar
 const receta = new Receta(); //Variable global para la instancia de la clase Receta
 const ingredientes = [];
 const ingredientesReceta = [];
 //Cuando se presione el boton guardar receta al final de la pagina
 addButton.onclick = function () {
-    comprobarTablas();
+    setTimeout(function () {
+        comprobarTablas();
+    }, 1000);
 };
 
 //Lectura de los datos ingresados en la receta para saber si estan completos o vacios para guardarlos en la clase posteriormente
@@ -39,29 +42,24 @@ async function leerDatosReceta() {
         rPortion == "" ||
         rTime == "" ||
         rType == "" ||
-        rImg.files.length === 0
+        rImg === undefined ||
+        rImg == null ||
+        rImg.name === ""
     ) {
         //No estan completos
         alert("Por favor, complete todos los campos y seleccione una imagen.");
         return;
     }
-    // Creamos un objeto FileReader
-    const reader = new FileReader();
-    // Leemos el contenido del archivo
-    reader.readAsArrayBuffer(rImg);
-    // Cuando se completa la lectura del archivo
-    reader.onloadend = function () {
-        // Obtenemos el blob de la imagen
-        const blob = new Blob([reader.result], { type: rImg.type });
-        //Creamos la receta para guardar los datos
-        receta.setName(rName);
-        receta.setDuration(rDuration);
-        receta.setPortion(rPortion);
-        receta.setTime(rTime);
-        receta.setType(rType);
-        receta.setImage(blob);
-        receta.setEmail(email);
-    };
+    const blob = new Blob([rImg], { type: rImg.type });
+    //Creamos la receta para guardar los datos
+    receta.setName(rName);
+    receta.setDuration(rDuration);
+    receta.setPortion(rPortion);
+    receta.setTime(rTime);
+    receta.setType(rType);
+    receta.setImage(blob);
+    receta.setEmail(email);
+
     imprimirDatosReceta(); //Debug
     await addRecipe();
     await DbIngredients();
@@ -128,7 +126,7 @@ async function addRecipe() {
         let idReceta = await obtenerIdReceta();
         console.log(idReceta); //Dubug
         receta.setId(idReceta);
-        await insertPasos();    
+        await insertPasos();
     }, 5000);
 }
 //Obtener el id de la receta
@@ -345,10 +343,18 @@ async function insertPasos() {
             } else {
                 //Si no era igual a la sintexis entonces significa que tiene imagen y entonces hay que contemplar eso
                 console.log("Tiene imagen"); //Debugg
-                const partes = filaproce.match(regex); //Comparar las cadenas para saber las partes y separarlas
-                const numeroPaso = partes[1]; //Aqui se guarda el numero del paso
-                const descripcion = partes[2]; //Aqui se guarda la descripcion del paso
-                const nombreArchivo = partes[3]; //Aqui se guarda el nombre de la imagen
+                const regexIm = /^Paso\s(\d+)\.\s([\w\s]+)\.\s([\w\s]+\.(jpg|jpeg|png|gif))$/i;
+                const partesIm = filaproce.match(regexIm); //Comparar las cadenas para saber las partes y separarlas
+                const numeroPasoIm = partesIm[1]; //Aqui se guarda el numero del paso
+                const descripcionIm = partesIm[2]; //Aqui se guarda la descripcion del paso
+                //Iterar por el array de blobs
+                let blobPaso;
+                for (let i = 0; i < pasosBlob.length; i++) {
+                    if (parseInt(pasosBlob[i].numero) === parseInt(numeroPasoIm)) {
+                        blobPaso = pasosBlob[i].blob;
+                        break; // Salir del loop cuando se encuentre el objeto correspondiente
+                    }
+                }
                 fetch("../php/insertarDB.php", {
                     //Peticion a php para insertar
                     //Peticion php para guardar cosas en DB
@@ -357,12 +363,12 @@ async function insertPasos() {
                         "Content-Type": "application/x-www-form-urlencoded"
                     },
                     body:
-                        'sql=INSERT INTO pasos (idPasos, paso, imagen, Recetas_idRecetas) VALUES ("' + //Sentencia SQL para guardar
-                        numeroPaso +
+                        'sql=INSERT INTO pasos (nopaso, paso, imagen, Recetas_idRecetas) VALUES ("' + //Sentencia SQL para guardar
+                        numeroPasoIm +
                         '", "' +
-                        descripcion +
+                        descripcionIm +
                         '", "' +
-                        nombreArchivo +
+                        blobPaso +
                         '", "' +
                         recetaId +
                         '")'
@@ -396,5 +402,4 @@ async function comprobarTablas() {
         alert("Se guardó la receta");
         window.location.href = "./createReceta.html";
     }, 1000);
-    
 }

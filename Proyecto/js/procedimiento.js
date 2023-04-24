@@ -1,9 +1,10 @@
+export const pasosBlob = []; //Arreglo de objetos Blob
 let ADDpro = document.getElementById("agregarpro");
 const pasos = {}; //Mapa de pasos para llevar control de los existentes
 ADDpro.onclick = async function () {
     let NStep = document.getElementById("nopaso").value;
     //Comprobamos que el paso no exista ya
-    const paso = `${NStep}.`; //Creamos un arreglo con el paso
+    const paso = `${NStep}`; //Creamos un arreglo con el paso
     if (pasos[paso]) {
         //comprobamos si el paso esta en el mapa de pasos
         alert("El paso ya existe");
@@ -53,7 +54,13 @@ ADDpro.onclick = async function () {
         let namestepimg = nameimg.name;
 
         // Convertir la imagen en un objeto Blob
-        let blob = new Blob([nameimg], { type: nameimg.type });
+        let blobimg = new Blob([nameimg], { type: nameimg.type });
+        // Guardar la cadena base64 en un array
+        let blobConDescripcion = {
+            numero: NStep,
+            blob: blobimg
+        };
+        pasosBlob.push(blobConDescripcion); // Agregar el objeto Blob con descripción al arreglo
 
         // agregar valores a la tabla de listado de ingredientes con el icono para eliminar
         let inicio = "Paso ";
@@ -73,14 +80,8 @@ ADDpro.onclick = async function () {
         tdtext.appendChild(txt); //Agregamos el textro al TD
         tdRemove.appendChild(icon); //Agregamos el icono al TD
 
-        // Agregar el objeto Blob a la tabla
-        const tdBlob = document.createElement("td");
-        tdBlob.style.display = "none";
-        tdBlob.appendChild(blob);
-
         tr.appendChild(tdRemove); //Agregamos el TD al TR
         tr.appendChild(tdtext); //Agregamos el TD al TR
-        tr.appendChild(tdBlob); // Agregamos el objeto Blob al TR
 
         const tbody = document
             .getElementById("procedimiento")
@@ -92,8 +93,20 @@ ADDpro.onclick = async function () {
 //Para eliminar
 function eliminarFila() {
     const tr = this.closest("tr");
+    const tdtext = tr.querySelector("td:nth-child(2)");
+    const explicacionEliminar = tdtext.textContent.trim();
+    const numeroPasoEliminar = Number(explicacionEliminar.match(/^Paso (\d+)/)[1]);
+    delete pasos[numeroPasoEliminar];
+    for (let i = 0; i < pasosBlob.length; i++) {
+        if (parseInt(pasosBlob[i].numero) === parseInt(numeroPasoEliminar)) {
+          pasosBlob.splice(i, 1); // Eliminar el objeto en la posición i
+          break; // Salir del bucle una vez que se elimine el objeto
+        }
+      }
+      
     tr.remove();
 }
+//Limpiar el formulario
 function limpiar() {
     document.getElementById("nopaso").value = "";
     document.getElementById("paso").value = "";

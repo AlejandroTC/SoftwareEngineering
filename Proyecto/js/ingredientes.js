@@ -13,7 +13,7 @@ Addingre.onclick = async function () {
     //Al hacer click en el boton de agregar ingrediente
     let NIName = document.getElementById("autocomplete-custom-append").value;
     //Chequeamos que no haya ingrtedientes duplicados
-    const ing = `${NIName}.`; //Creamos una variable para guardar el nombre
+    const ing = `${NIName}`; //Creamos una variable para guardar el nombre
     if (ingres[ing]) {
         //Si el ingrediente existe en el arreglo de nombres de ingerdientes agregados en la receta
         alert("El ingrediente ya existe"); //Error
@@ -27,8 +27,6 @@ Addingre.onclick = async function () {
         alert("Ingrese un número como cantidad"); //Alerta de que no es un numero
         return; //No continua y no agrega nada
     } else {
-        ingres[ing] = true; // Agregar el ingrediente al arreglo de ingredientes en la receta
-
         //Continuamos con el codigo normal
         let NIUnit = document.getElementById("unidad_medida").value; //Guardamos las unidades
         if (!NIName || !NIQuantity || !NIUnit) {
@@ -36,6 +34,7 @@ Addingre.onclick = async function () {
             // Al menos una de las variables es vacía o nula
             alert("Por favor, complete todos los campos");
         } else {
+            ingres[ing] = true; // Agregar el ingrediente al arreglo de ingredientes en la receta
             //agregar valores a la tabla de listado de ingredientes con el icono para eliminar
             let ulingredient = NIQuantity + " " + NIUnit + " de " + NIName; //Encadenamos para formar el texto a plasmar
             const tr = document.createElement("tr"); //Creamos el TR
@@ -63,8 +62,12 @@ Addingre.onclick = async function () {
     }
 };
 //Para eliminar
+//Para eliminar
 function eliminarFila() {
     const tr = this.closest("tr");
+    const tdtext = tr.querySelector("td:nth-child(2)").textContent;
+    const ingEliminar = tdtext.split("de")[1].trim();
+    delete ingres[ingEliminar];
     tr.remove();
 }
 //Limpiamos el formulario de los ingredientes
