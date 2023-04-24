@@ -12,19 +12,6 @@ El siguiente código está escrito en PHP y recupera datos de una tabla de base 
     Se llama a la función json_encode en el array de resultados para convertirlo al formato JSON.
     Se establece la cabecera Content-Type en "application/json" utilizando la función header.
     Se imprime el array codificado en JSON como respuesta.
-
-The following code is written in PHP and retrieves data from a MySQL database table named "ingredientes" and returns it in JSON format. Here's a breakdown of what the code does:
-    The variables $servername, $username, $password, and $dbname are initialized with the values required to connect to the MySQL database.
-    A try-catch block is used to catch any exceptions that may occur while connecting to the database.
-    The PDO (PHP Data Objects) class is used to create a connection to the database using the given credentials.
-    The PDO::setAttribute method is called to set the error mode of PDO to PDO::ERRMODE_EXCEPTION, which means that PDO will throw an exception if an error occurs instead of returning false.
-    A SQL query is defined to retrieve all the data from the "ingredientes" table.
-    A PDOStatement object is created by calling the prepare method on the PDO object and passing the SQL query as a parameter.
-    The execute method is called on the PDOStatement object to execute the SQL query.
-    The fetchAll method is called on the PDOStatement object to fetch all the results as an array of associative arrays.
-    The json_encode function is called on the array of results to convert it to JSON format.
-    The Content-Type header is set to "application/json" using the header function.
-    The JSON-encoded array is echoed as the response.
 ATC
 */
 $servername = "localhost";
