@@ -2,13 +2,13 @@ import { Receta } from "./recetaclass.js";
 const recetas = []; //Para guardar las recetas
 const email = await obtenerCorreo();
 
-fetch("../php/misRecetas.php", {
+fetch("../php/insertarDB.php", {
     method: "POST",
     headers: {
         "Content-Type": "application/x-www-form-urlencoded"
     },
     body:
-        'sql=SELECT idRecetas, nombre, imagen FROM recetas WHERE Usuarios_correo="' +
+        'sql=SELECT idRecetas, nombre FROM recetas WHERE Usuarios_correo="' +
         email +
         '";'
 })
@@ -18,9 +18,8 @@ fetch("../php/misRecetas.php", {
         data.forEach((obj) => {
             const receta = new Receta();
             receta.setName(obj.nombre);
-            receta.setId(obj.id);
+            receta.setId(obj.idRecetas);
             receta.setEmail(email);
-            receta.setImage(obj.imagen);
             // Agregar la instancia de Receta al array de recetas
             recetas.push(receta);
         });
@@ -36,10 +35,13 @@ async function obtenerCorreo() {
     const user = data.correo;
     return user;
 }
+
 //Imprimimos las recetas en el html
-function imprimirRecetas() {
+async function imprimirRecetas() {
     const contenedorRecetas = document.getElementById("contenedor-recetas");
-    recetas.forEach((receta) => {
+    for (const receta of recetas) {
+        //Obtener el blob de la receta
+        receta.setImage(await obtenerImg(receta.getId()));
 
         const divCol = document.createElement("div");
         divCol.classList.add("col-md-4", "col-sm-4");
@@ -53,7 +55,7 @@ function imprimirRecetas() {
         const img = document.createElement("img");
         img.style.width = "100%";
         img.style.display = "block";
-        img.src = "data:image/png;base64," + receta.getImage();
+        img.src = "data:image/png;base64," + (await obtenerImg(receta.getId()));
         img.alt = "imagen de la receta";
 
         const divMask = document.createElement("div");
@@ -119,5 +121,28 @@ function imprimirRecetas() {
         divThumbnail.appendChild(divCaption);
         divCol.appendChild(divThumbnail);
         contenedorRecetas.appendChild(divCol);
-    });
+    }
+    brake;
+}
+async function obtenerImg(id) {
+    try {
+        const response = await fetch("../php/misRecetas.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body:
+                'sql=SELECT imagen FROM recetas WHERE idRecetas="' +
+                id +
+                '" AND Usuarios_correo="' +
+                email +
+                '";'
+        });
+        const data = await response.json();
+        if (data.length > 0) {
+            return data[0].imagen;
+        }
+    } catch (error) {
+        console.log(error);
+    }
 }
