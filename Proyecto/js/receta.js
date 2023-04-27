@@ -18,6 +18,19 @@ let addButton = document.getElementById("guardarreceta"); //Variable global para
 const receta = new Receta(); //Variable global para la instancia de la clase Receta
 const ingredientes = [];
 const ingredientesReceta = [];
+const logoutB = document.getElementById("logout");
+
+logoutB.addEventListener("click", function () {
+    // Enviar petición al servidor para cerrar la sesión
+    fetch("../php/logout.php", { method: "POST" })
+        .then((response) => {
+            // Si la petición es exitosa, redirigir al usuario a la página de inicio de sesión
+            window.location.href = "../html/index.html";
+        })
+        .catch((error) => {
+            console.error("Error al cerrar la sesión:", error);
+        });
+});
 //Cuando se presione el boton guardar receta al final de la pagina
 addButton.onclick = function () {
     setTimeout(function () {
@@ -365,11 +378,7 @@ async function insertPasos() {
                 const formData = new FormData();
                 formData.append("nopaso", numeroPasoIm);
                 formData.append("paso", descripcionIm);
-                formData.append(
-                    "imagen",
-                    blobPaso,
-                    "paso_" + numeroPasoIm + ".jpg"
-                );
+                formData.append("imagen", blobPaso, "imagen.jpg");
                 formData.append("Recetas_idRecetas", recetaId);
                 fetch("../php/insertPasosImg.php", {
                     method: "POST",

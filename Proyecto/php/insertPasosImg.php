@@ -13,7 +13,7 @@ try {
     $imagen = $_FILES['imagen']['tmp_name'];
     $Recetas_idRecetas = $_POST['Recetas_idRecetas'];
 
-    $stmt = $conn->prepare('INSERT INTO pasos (numero_paso, descripcion, imagen, Recetas_idRecetas) VALUES (:nopaso, :paso, :imagen, :receta)');
+    $stmt = $conn->prepare('INSERT INTO pasos (nopaso, paso, imagen, Recetas_idRecetas) VALUES (:nopaso, :paso, :imagen, :receta)');
 
     $stmt->bindValue(':nopaso', $nopaso);
     $stmt->bindValue(':paso', $paso);

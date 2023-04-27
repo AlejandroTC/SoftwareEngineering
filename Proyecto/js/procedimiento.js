@@ -55,7 +55,7 @@ ADDpro.onclick = async function () {
 
         const reader = new FileReader();
         reader.onload = () => {
-            const blob = new Blob([reader.result], { type: rImg.type });
+            const blob = new Blob([reader.result], { type: nameimg.type });
             let blobConDescripcion = {
                 numero: NStep,
                 blob: blob
