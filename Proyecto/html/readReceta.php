@@ -1,4 +1,10 @@
 <?php
+if (isset($_POST["idReceta"])) {
+	$idReceta = $_POST["idReceta"];
+	echo "El ID de la receta es: " . $idReceta;
+  } else {
+	echo "No se recibió el ID de la receta.";
+  }
 $servername = "localhost";
 $username = "root";
 $password = "";

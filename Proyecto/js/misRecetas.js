@@ -78,11 +78,28 @@ async function imprimirRecetas() {
         divTools.classList.add("tools", "tools-bottom");
 
         const aVerReceta = document.createElement("a");
+        aVerReceta.id = receta.getId();
         aVerReceta.href = "#";
         const iVerReceta = document.createElement("i");
         iVerReceta.classList.add("fa", "fa-eye");
         aVerReceta.appendChild(iVerReceta);
         divTools.appendChild(aVerReceta);
+
+        aVerReceta.addEventListener("click", function() {
+            const idReceta = this.id;
+            const form = document.createElement("form");
+            form.method = "POST";
+            form.action = "readReceta.php";
+            const inputId = document.createElement("input");
+            inputId.type = "hidden";
+            inputId.name = "idReceta";
+            inputId.value = idReceta;
+            
+            form.appendChild(inputId);
+            
+            document.body.appendChild(form);
+            form.submit();
+          });
 
         const aEditarReceta = document.createElement("a");
         aEditarReceta.id = receta.getId();
@@ -92,10 +109,9 @@ async function imprimirRecetas() {
         aEditarReceta.appendChild(iEditarReceta);
         divTools.appendChild(aEditarReceta);
 
-        aEditarReceta.addEventListener("click", function() {
+        aEditarReceta.addEventListener("click", function () {
             // Obtener el ID de la receta del atributo "id" del elemento clickeado
             const idReceta = this.id;
-            
             // Crear un formulario con un campo oculto que contenga el ID de la receta
             const form = document.createElement("form");
             form.method = "POST";
@@ -105,14 +121,12 @@ async function imprimirRecetas() {
             inputIdReceta.name = "idReceta";
             inputIdReceta.value = idReceta;
             form.appendChild(inputIdReceta);
-          
+
             // Agregar el formulario a la página y enviarlo
             document.body.appendChild(form);
             form.submit();
-          });
-          
-          
-        
+        });
+
         divMask.appendChild(divTools);
         divImage.appendChild(img);
         divImage.appendChild(divMask);
