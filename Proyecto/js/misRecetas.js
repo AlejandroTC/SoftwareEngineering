@@ -1,6 +1,19 @@
 import { Receta } from "./recetaclass.js";
 const recetas = []; //Para guardar las recetas
 const email = await obtenerCorreo();
+const logoutB = document.getElementById("logout");
+
+logoutB.addEventListener("click", function () {
+    // Enviar petición al servidor para cerrar la sesión
+    fetch("../php/logout.php", { method: "POST" })
+        .then((response) => {
+            // Si la petición es exitosa, redirigir al usuario a la página de inicio de sesión
+            window.location.href = "../html/index.html";
+        })
+        .catch((error) => {
+            console.error("Error al cerrar la sesión:", error);
+        });
+});
 
 fetch("../php/insertarDB.php", {
     method: "POST",
@@ -72,12 +85,34 @@ async function imprimirRecetas() {
         divTools.appendChild(aVerReceta);
 
         const aEditarReceta = document.createElement("a");
+        aEditarReceta.id = receta.getId();
         aEditarReceta.href = "#";
         const iEditarReceta = document.createElement("i");
         iEditarReceta.classList.add("fa", "fa-pencil");
         aEditarReceta.appendChild(iEditarReceta);
         divTools.appendChild(aEditarReceta);
 
+        aEditarReceta.addEventListener("click", function() {
+            // Obtener el ID de la receta del atributo "id" del elemento clickeado
+            const idReceta = this.id;
+            
+            // Crear un formulario con un campo oculto que contenga el ID de la receta
+            const form = document.createElement("form");
+            form.method = "POST";
+            form.action = "updateReceta.php";
+            const inputIdReceta = document.createElement("input");
+            inputIdReceta.type = "hidden";
+            inputIdReceta.name = "idReceta";
+            inputIdReceta.value = idReceta;
+            form.appendChild(inputIdReceta);
+          
+            // Agregar el formulario a la página y enviarlo
+            document.body.appendChild(form);
+            form.submit();
+          });
+          
+          
+        
         divMask.appendChild(divTools);
         divImage.appendChild(img);
         divImage.appendChild(divMask);
@@ -122,7 +157,6 @@ async function imprimirRecetas() {
         divCol.appendChild(divThumbnail);
         contenedorRecetas.appendChild(divCol);
     }
-    brake;
 }
 async function obtenerImg(id) {
     try {
@@ -140,7 +174,8 @@ async function obtenerImg(id) {
         });
         const data = await response.json();
         if (data.length > 0) {
-            return data[0].imagen;
+            console.log(data);
+            return data;
         }
     } catch (error) {
         console.log(error);

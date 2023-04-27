@@ -50,19 +50,22 @@ async function leerDatosReceta() {
         alert("Por favor, complete todos los campos y seleccione una imagen.");
         return;
     }
-    const blob = new Blob([rImg], { type: rImg.type });
-    //Creamos la receta para guardar los datos
-    receta.setName(rName);
-    receta.setDuration(rDuration);
-    receta.setPortion(rPortion);
-    receta.setTime(rTime);
-    receta.setType(rType);
-    receta.setImage(blob);
-    receta.setEmail(email);
-
-    imprimirDatosReceta(); //Debug
-    await addRecipe();
-    await DbIngredients();
+    const reader = new FileReader();
+    reader.onload = async () => {
+        const blob = new Blob([reader.result], { type: rImg.type });
+        //Creamos la receta para guardar los datos
+        receta.setName(rName);
+        receta.setDuration(rDuration);
+        receta.setPortion(rPortion);
+        receta.setTime(rTime);
+        receta.setType(rType);
+        receta.setImage(blob);
+        receta.setEmail(email);
+        console.log("Guardando imagen");
+        imprimirDatosReceta(); //Debug
+        await addRecipe();
+    };
+    reader.readAsArrayBuffer(rImg);
 }
 
 //Comprobar los datos de la receta, es con fines de debugin
@@ -84,6 +87,7 @@ async function obtenerCorreo() {
     const response = await fetch("../php/session.php");
     const data = await response.json();
     const user = data.correo;
+    console.log("ObtenerCorreo()", data.correo); //debug
     return user;
 }
 //------------------------Receta datos y acciones----------------------------
@@ -96,39 +100,35 @@ async function addRecipe() {
     let rPortion = receta.getPortion();
     let rimg = receta.getImage();
     let correo = receta.getEmail();
-    fetch("../php/insertarDB.php", {
-        //Peticion php para guardar cosas en DB
+
+    // Crear un objeto FormData y agregar la imagen como un campo "imagen"
+    const formData = new FormData();
+    formData.append("imagen", rimg, "imagen.jpg");
+
+    // Agregar los demás campos a la solicitud
+    formData.append("nombre", rName);
+    formData.append("duracion", rDuration);
+    formData.append("tiempo_comida", rTime);
+    formData.append("tiempo_receta", rType);
+    formData.append("porciones", rPortion);
+    formData.append("usuarios_correo", correo);
+
+    fetch("../php/insertRecetas.php", {
+        // Peticion php para guardar cosas en DB
         method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        //Sentencia para enviar la receta
-        body:
-            'sql=INSERT INTO recetas (nombre, duracion, tiempo_comida, tiempo_receta, porciones, imagen, usuarios_correo) VALUES ("' +
-            rName +
-            '", "' +
-            rDuration +
-            '", "' +
-            rTime +
-            '", "' +
-            rType +
-            '", "' +
-            rPortion +
-            '", "' +
-            rimg +
-            '", "' +
-            correo +
-            '")'
+        body: formData // Enviar el objeto FormData en lugar de una cadena de consulta
     })
         .then((response) => console.log("Se añadio la receta")) //Mostrar en la consola que se añadio
         .catch((error) => console.error(error)); //Mostrar el error si es que hubo
+
     setTimeout(async function () {
         let idReceta = await obtenerIdReceta();
-        console.log(idReceta); //Dubug
+        console.log(idReceta); // Debug
         receta.setId(idReceta);
-        await insertPasos();
+        await DbIngredients();
     }, 5000);
 }
+
 //Obtener el id de la receta
 async function obtenerIdReceta() {
     let rName = receta.getName();
@@ -194,8 +194,8 @@ async function DbIngredients() {
         //Comprobamos los ingredientes de la receta en la base de datos
         await sendIngredient(ingrediente);
     }
+    console.log(ingredientesReceta); //Debug
     await obtenerIdIngrediente();
-    await insertRecipeIngredients();
 }
 
 //Funcion para leer los ingredientes de la BD y enviar si es que no esta
@@ -266,15 +266,18 @@ async function obtenerIdIngrediente() {
         });
     });
     await Promise.all(promises); //Completar primero todas las promesas antes de continuar con la ejecucion del codigo
+    await insertRecipeIngredients();
+    await insertPasos();
 }
 //Ingresamos los ingredientes a la receta, en la tabla Receta_has_ingredientes
 async function insertRecipeIngredients() {
+    console.log("Receta has ingredientes inicio");
     let recetaId = receta.getId();
     for (const ingredienteReceta of ingredientesReceta) {
         const idIngredienteAgregar = ingredienteReceta.getId();
         const quantity = ingredienteReceta.getQuantity();
         const unitMedida = ingredienteReceta.getUnit();
-
+        console.log("Receta has ingredientes: ", ingredienteReceta);
         try {
             const response = await fetch("../php/insertarDB.php", {
                 method: "POST",
@@ -343,35 +346,34 @@ async function insertPasos() {
             } else {
                 //Si no era igual a la sintexis entonces significa que tiene imagen y entonces hay que contemplar eso
                 console.log("Tiene imagen"); //Debugg
-                const regexIm = /^Paso\s(\d+)\.\s([\w\s]+)\.\s([\w\s]+\.(jpg|jpeg|png|gif))$/i;
+                const regexIm =
+                    /^Paso\s(\d+)\.\s([\w\s]+)\.\s([\w\s]+\.(jpg|jpeg|png|gif))$/i;
                 const partesIm = filaproce.match(regexIm); //Comparar las cadenas para saber las partes y separarlas
                 const numeroPasoIm = partesIm[1]; //Aqui se guarda el numero del paso
                 const descripcionIm = partesIm[2]; //Aqui se guarda la descripcion del paso
+
                 //Iterar por el array de blobs
                 let blobPaso;
                 for (let i = 0; i < pasosBlob.length; i++) {
-                    if (parseInt(pasosBlob[i].numero) === parseInt(numeroPasoIm)) {
+                    if (
+                        parseInt(pasosBlob[i].numero) === parseInt(numeroPasoIm)
+                    ) {
                         blobPaso = pasosBlob[i].blob;
                         break; // Salir del loop cuando se encuentre el objeto correspondiente
                     }
                 }
-                fetch("../php/insertarDB.php", {
-                    //Peticion a php para insertar
-                    //Peticion php para guardar cosas en DB
+                const formData = new FormData();
+                formData.append("nopaso", numeroPasoIm);
+                formData.append("paso", descripcionIm);
+                formData.append(
+                    "imagen",
+                    blobPaso,
+                    "paso_" + numeroPasoIm + ".jpg"
+                );
+                formData.append("Recetas_idRecetas", recetaId);
+                fetch("../php/insertPasosImg.php", {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded"
-                    },
-                    body:
-                        'sql=INSERT INTO pasos (nopaso, paso, imagen, Recetas_idRecetas) VALUES ("' + //Sentencia SQL para guardar
-                        numeroPasoIm +
-                        '", "' +
-                        descripcionIm +
-                        '", "' +
-                        blobPaso +
-                        '", "' +
-                        recetaId +
-                        '")'
+                    body: formData
                 })
                     .then((response) => response.json())
                     .then((data) =>
@@ -380,6 +382,7 @@ async function insertPasos() {
                     .catch((error) => console.error(error));
             }
         }
+        await final();
     } catch (error) {
         console.error(error);
     }
@@ -397,9 +400,14 @@ async function comprobarTablas() {
         alert("Por favor complete los ingredientes y pasos");
         return;
     }
-    await leerDatosReceta();
-    setTimeout(function () {
-        alert("Se guardó la receta");
-        window.location.href = "./createReceta.html";
-    }, 1000);
+    try {
+        await leerDatosReceta();
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+async function final() {
+    alert("Se guardó la receta");
+    window.location.href = "./createReceta.html";
 }

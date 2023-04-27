@@ -53,14 +53,16 @@ ADDpro.onclick = async function () {
         let nameimg = Stepimg.files[0];
         let namestepimg = nameimg.name;
 
-        // Convertir la imagen en un objeto Blob
-        let blobimg = new Blob([nameimg], { type: nameimg.type });
-        // Guardar la cadena base64 en un array
-        let blobConDescripcion = {
-            numero: NStep,
-            blob: blobimg
+        const reader = new FileReader();
+        reader.onload = () => {
+            const blob = new Blob([reader.result], { type: rImg.type });
+            let blobConDescripcion = {
+                numero: NStep,
+                blob: blob
+            };
+            pasosBlob.push(blobConDescripcion); // Agregar el objeto Blob con descripción al arreglo
         };
-        pasosBlob.push(blobConDescripcion); // Agregar el objeto Blob con descripción al arreglo
+        reader.readAsArrayBuffer(nameimg);
 
         // agregar valores a la tabla de listado de ingredientes con el icono para eliminar
         let inicio = "Paso ";
@@ -95,15 +97,17 @@ function eliminarFila() {
     const tr = this.closest("tr");
     const tdtext = tr.querySelector("td:nth-child(2)");
     const explicacionEliminar = tdtext.textContent.trim();
-    const numeroPasoEliminar = Number(explicacionEliminar.match(/^Paso (\d+)/)[1]);
+    const numeroPasoEliminar = Number(
+        explicacionEliminar.match(/^Paso (\d+)/)[1]
+    );
     delete pasos[numeroPasoEliminar];
     for (let i = 0; i < pasosBlob.length; i++) {
         if (parseInt(pasosBlob[i].numero) === parseInt(numeroPasoEliminar)) {
-          pasosBlob.splice(i, 1); // Eliminar el objeto en la posición i
-          break; // Salir del bucle una vez que se elimine el objeto
+            pasosBlob.splice(i, 1); // Eliminar el objeto en la posición i
+            break; // Salir del bucle una vez que se elimine el objeto
         }
-      }
-      
+    }
+
     tr.remove();
 }
 //Limpiar el formulario

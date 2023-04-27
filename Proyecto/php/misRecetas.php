@@ -11,17 +11,21 @@ try {
     header("Content-Type: application/json");
     $sql = $_POST['sql'];
     $resultado = $conn->query($sql);
-    if ($resultado && mysqli_num_rows($resultado) > 0) {
-        $fila = mysqli_fetch_assoc($resultado);
-        $imagen = $fila["imagen"];
-        $tipo = $imagen->type;
-        $datos = base64_encode(file_get_contents($imagen->tmp_name));
-        $url = "data:$tipo;base64,$datos";
-        echo json_encode(array("url" => $url)); 
+
+    // Usar la función de PDO para obtener la imagen
+    $row = $resultado->fetch(PDO::FETCH_ASSOC);
+    $imagen = $row["imagen"];
+
+    if ($imagen) {
+        $imagen_base64 = base64_encode($imagen);
+        echo json_encode($imagen_base64);  
     } else {
-        echo json_encode(array("error" => "No se encontró ninguna imagen"));
+        // Manejar el caso en el que no se encuentra ninguna imagen
+        throw new Exception("No se encontró ninguna imagen");
     }
 } catch(PDOException $e) {
     echo "Error: " . $e->getMessage();
+} catch(Exception $e) {
+    echo json_encode(array("error" => $e->getMessage()));
 }
 ?>
