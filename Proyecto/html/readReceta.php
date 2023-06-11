@@ -1,10 +1,4 @@
 <?php
-if (isset($_POST["idReceta"])) {
-	$idReceta = $_POST["idReceta"];
-	echo "El ID de la receta es: " . $idReceta;
-  } else {
-	echo "No se recibió el ID de la receta.";
-  }
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -13,28 +7,65 @@ $dbname = "recetasDB";
 // Conexión a la base de datos
 $conn = mysqli_connect($servername, $username, $password, $dbname);
 
+if (isset($_POST["idReceta"])) {
+	$idReceta = $_POST["idReceta"];
+	//echo "El ID de la receta es: " . $idReceta;
+  } else {
+	echo "No se recibió el ID de la receta.";
+  }
+
 // Realizar la consultas
-$resultadonombre = mysqli_query($conn, "SELECT nombre FROM recetas WHERE idRecetas = 1");
-$resultadoduracion = mysqli_query($conn, "SELECT duracion FROM recetas WHERE idRecetas = 1");
-$resultadoporcion = mysqli_query($conn, "SELECT porciones FROM recetas WHERE idRecetas = 1");
-$resultadoingrediente = mysqli_query($conn, "SELECT * FROM ingredientes INNER JOIN recetas_has_ingredientes ON recetas_has_ingredientes.Ingredientes_idIngredientes= ingredientes.idIngredientes WHERE recetas_has_ingredientes.Recetas_idRecetas=1");
-$resultadopasos = mysqli_query($conn, "SELECT paso FROM pasos WHERE Recetas_idRecetas=1");
- 
+$resultadonombre = mysqli_query($conn, "SELECT nombre FROM recetas WHERE idRecetas = $idReceta");
+$resultadoduracion = mysqli_query($conn, "SELECT duracion FROM recetas WHERE idRecetas = $idReceta");
+$resultadoporcion = mysqli_query($conn, "SELECT porciones FROM recetas WHERE idRecetas = $idReceta");
+$resultadoingrediente = mysqli_query($conn, "SELECT * FROM ingredientes INNER JOIN recetas_has_ingredientes ON recetas_has_ingredientes.Ingredientes_idIngredientes= ingredientes.idIngredientes WHERE recetas_has_ingredientes.Recetas_idRecetas=$idReceta");
+$resultadopasos = mysqli_query($conn, "SELECT paso, nopaso FROM pasos WHERE Recetas_idRecetas=$idReceta ORDER BY nopaso ASC");
+$resultadocantidad = mysqli_query($conn, "SELECT cantidad FROM recetas_has_ingredientes WHERE Recetas_idRecetas = $idReceta");
+$resultadounidad = mysqli_query($conn, "SELECT unidad_medida FROM recetas_has_ingredientes WHERE Recetas_idRecetas = $idReceta");
+
 
 //IMAGEN
-$qimagen = "SELECT imagen FROM recetas WHERE idRecetas = 4";
+$qimagen = "SELECT imagen FROM recetas WHERE idRecetas = $idReceta";
 $resultadoimagen = $conn->query($qimagen);
 $imagen = mysqli_fetch_assoc($resultadoimagen)["imagen"];
 $imagen_base64 = base64_encode($imagen);
 
+//Imágenes pasos 
+$resultadoimgpasos = mysqli_query($conn, "SELECT imagen FROM pasos WHERE Recetas_idRecetas= $idReceta");
+
+
+/*
+//Porciones
+$no_porciones = $_POST['no_porciones'];
+$insertporciones = mysqli_query($conn, "INSERT INTO planeacion (idplaneacion, no_porciones) VALUES (NULL, $no_porciones)");
+*/
 
 // Obtener el valor de la columna y guardarlo en una variable
 $nombre = mysqli_fetch_assoc($resultadonombre)["nombre"];
 $duracion = mysqli_fetch_assoc($resultadoduracion)["duracion"];
 $porciones = mysqli_fetch_assoc($resultadoporcion)["porciones"];
 $ingredientes = mysqli_fetch_assoc($resultadoingrediente)["nombre"];
+$cantidad= mysqli_fetch_assoc($resultadocantidad)["cantidad"];
+$unidad= mysqli_fetch_assoc($resultadounidad)["unidad_medida"];
 $pasos = mysqli_fetch_assoc($resultadopasos)["paso"];
 
+/*
+function almacenarreceta()
+{
+
+	$servername = "localhost";
+	$username = "root";
+	$password = "";
+	$dbname = "recetasDB";
+
+	// Conexión a la base de datos
+	$conn = mysqli_connect($servername, $username, $password, $dbname);
+
+	$resultadoreceta = mysqli_query($conn, "SELECT idRecetas FROM recetas WHERE idRecetas =  $idReceta");
+	$receta = mysqli_fetch_assoc($resultadoreceta)["idRecetas"];
+	$insertarreceta = mysqli_query($conn, "INSERT INTO recetas (planeacion_idplaneacion) VALUES ('1') ");
+
+}*/
 
 // Cerrar la conexión a la base de datos
 mysqli_close($conn);
@@ -92,15 +123,15 @@ mysqli_close($conn);
 					<div class="menu_section">
 						<ul class="nav side-menu">
 							<li><a href="#"><i class="fa fa-home"></i> Inicio</a></li>
-							<li><a><i class="fa fa-birthday-cake"></i> Mis recetas</a></li>
+							<li><a href="misRecetas.html"><i class="fa fa-birthday-cake"></i> Mis recetas</a></li>
 							<li><a><i class="fa fa-group"></i> Grupos <span class="fa fa-chevron-down"></span></a>
 								<ul class="nav child_menu">
-									<li><a href="readReceta.html">Familia</a></li>
+									<li><a href="#">Familia</a></li>
 									<li><a href="#">Amigos</a></li>
 								</ul>
 							</li>
-							<li><a><i class="fa fa-list-alt"></i> Planeación de recetas</a></li>
-							<li><a><i class="fa fa-money"></i> Lista de compras</a></li>
+							<li><a href="planeacion.html"><i class="fa fa-list-alt"></i> Planeación de recetas</a></li>
+							<li><a href="#"><i class="fa fa-money"></i> Lista de compras</a></li>
 						</ul>
 					</div>
 				</div>
@@ -143,15 +174,47 @@ mysqli_close($conn);
                     <form id="demo-form" data-parsley-validate>                                        
                       	<div class="form-group row">
 							<div class="col-md-3 col-sm-3 ">
-								<h6 class="col-form-label col-md-4 col-sm-4 ">DURACIÓN: </h6>
-								<label class="col-form-label col-md-8 col-sm-8 "><?php echo $duracion; ?></label>
+								<h6 class="col-form-label col-md-12 col-sm-12 ">DURACIÓN: </h6>
+								<br>
+								<label class="col-form-label col-md-12 col-sm-12 "><?php echo $duracion; ?></label>
 							</div>
 							<div class="col-md-3 col-sm-3 ">
-								<h6 class="col-form-label col-md-4 col-sm-4 ">PORCIONES: </h6>
-								<label class="col-form-label col-md-8 col-sm-8 "><?php echo $porciones; ?></label>
+								<h6 class="col-form-label col-md-12 col-sm-12 ">PORCIONES: </h6>
+								<label class="col-form-label col-md-12 col-sm-12 "><?php echo $porciones; ?></label>
 							</div>
-							<div class="col-md-3 col-sm-3 " align="right">
-								<button type="button" class="btn btn-success">Agregar a planeación</button>
+							<div class="col-md-3 col-sm-3 ">
+								<button type="button"  align="right" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-sm">Agregar a planeación</button>
+								<!-- Small modal -->
+
+								<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
+								  <div class="modal-dialog modal-sm">
+									<div class="modal-content">
+			  
+									  <div class="modal-header">
+										<h5 class="modal-title" id="myModalLabel2">Agregar receta a planeación</h5>
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+										</button>
+									  </div>
+									  <div class="modal-body">
+										<div class="form-group row">
+											<label class="col-form-label col-md-12 col-sm-12 "></label>
+											<div class="col-md-12 col-sm-12 ">
+												<label for="fullname">Ingresa el número de porciones que quieres preparar de esta receta:</label>
+												<input type="number" class="form-control" name="no_porciones"
+													placeholder="Número de porciones" id="no_porciones_planeacion">
+											</div>
+										</div>
+									  </div>
+									  <div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+										<button type="button" class="btn btn-success" onclick="actionCreate('<?php echo $idReceta; ?>');">Guardar</button>
+
+									  </div>
+			  
+									</div>
+								  </div>
+								</div>
+								<!-- /modals -->
 							</div>
 							<div class="col-md-3 col-sm-3 " align="right">
 								<button type="button" class="btn btn-info" onclick="window.location.href='\\ComidayCompras/Proyecto/html/updateReceta.php';">Editar o eliminar receta </button>
@@ -159,31 +222,30 @@ mysqli_close($conn);
 						</div>
 
                       	<div class="form-group row">
-							<div class="col-md-5 col-sm-5 ">
+							<div class="col-md-6 col-sm-6 ">
 								<h6 class="col-form-label col-md-12 col-sm-12 ">INGREDIENTES: </h6>	
 								<ul>
 									<?php 
-									echo "<li>".$ingredientes."</li>";
-									while($ingredientes = mysqli_fetch_assoc($resultadoingrediente))
+									echo "<li>".$cantidad." ". $unidad." de ".$ingredientes."</li>";
+									while($ingredientes = mysqli_fetch_assoc($resultadoingrediente) and $cantidad= mysqli_fetch_assoc($resultadocantidad) and $unidad= mysqli_fetch_assoc($resultadounidad))
 									{
-										echo "<li>".$ingredientes['nombre']."</li>";
+										echo "<li>".$cantidad['cantidad']." ". $unidad["unidad_medida"]." de ".$ingredientes['nombre']. "</li>";
 									}
 
 									?>
 								</ul>																								
 							</div>
-							<div class="col-md-7 col-sm-7 ">
-								<div class="thumbnail">
-									<div class="image view view-first">
-										<!--IMAGEN-->
+							<div class="col-md-6 col-sm-8 ">
+										
+									<!--IMAGEN-->
 
 										<?php
 										
-										echo '<img style="width: 100%;" src="data:image/png;base64,'.base64_encode($imagen_base64).'"/>';
+
+										echo '<img  width=100% height=70% src="data:image/jpeg;base64,' . $imagen_base64 . '">';
+
 
 										?>
-
-									</div>
 									<div class="caption" align="center">
 										<p>Calificación:</p>
 										<!--Agregar el onclick en <a>, NO en span-->
@@ -193,7 +255,6 @@ mysqli_close($conn);
 										<a href="#"><span class="glyphicon glyphicon-star" aria-hidden="true" type="button"></span></a>
 										<a href="#"><span class="glyphicon glyphicon-star-empty" aria-hidden="true" type="button"></span></a>
 									</div>
-								</div>
 							</div>
 						</div>
 						<div class="form-group row">
@@ -202,6 +263,7 @@ mysqli_close($conn);
 							</div>
 						</div>
 						</form>
+						
                     <!-- Tabs -->
 					<div id="wizard_verticle" class="form_wizard wizard_verticle">
 						<ul id="steps-list" class="list-unstyled wizard_steps">
@@ -215,11 +277,11 @@ mysqli_close($conn);
 							} 
 							?>
 						</ul>
-
+					
 						<?php 
 							$cont=1;
 							mysqli_data_seek($resultadopasos, 0); // reset the data pointer
-							while($pasos = mysqli_fetch_assoc($resultadopasos)) {
+							while($pasos = mysqli_fetch_assoc($resultadopasos) and $fila = mysqli_fetch_assoc($resultadoimgpasos)) {
 							echo "<div id=\"step-$cont\">";
 								echo "<br>";
 								echo "<div class=\"col-md-6 col-sm-6\">";
@@ -227,21 +289,29 @@ mysqli_close($conn);
 									echo "<p>{$pasos['paso']}</p>";
 								echo "</div>";
 								echo "<div class=\"col-md-6 col-sm-6\">";
-									echo "<div class=\"image view view-first\">";
-										echo "<img style=\"width: 100%; display: block;\" src=\"../img/$cont.png\" alt=\"image\" />";
+								echo "<div class=\"image view view-first\">";
+									// Obtener la variable BLOB de la fila actual
+									$imagen = $fila['imagen'];
+  
+									// Mostrar la imagen en la página utilizando la función base64_encode
+									if (!empty($imagen)) {
+										echo '<img width="100%" height="100%" src="data:image/jpeg;base64,' . base64_encode($imagen) . '">';
+									}
+
 									echo "</div>";
-									echo "<br>";
 								echo "</div>";
 							echo "</div>";
-							$cont++;
+							
+							$cont++;	
 							} 
+							
 						?>
-
-					<!-- End SmartWizard Content -->
 					</div>
-                </div>
-              </div>
-            </div>
+					<!-- End SmartWizard Content -->
+				     </div>
+                   </div>
+               </div>
+             </div>
           </div>
         </div>
         <!-- /page content -->
@@ -270,6 +340,8 @@ mysqli_close($conn);
     <!-- Custom Theme Scripts -->
     <script src="../../gentelella-master/build/js/custom.min.js"></script>
 
+    <!-- Agregar elemento a planeación -->
+    <script src="../js/agregarPlaneacion.js"></script>
 	
   </body>
 </html>

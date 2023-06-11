@@ -20,7 +20,17 @@ if($rconsulta)
 }
 else
 {
-    $query = "INSERT INTO usuarios(correo,clave,nombre) VALUES ('$correo','$contrasena','$usuario')";
+    // Consulta para agrgar la planeación asociada al usuario a crear
+    $queryMain = "INSERT INTO planeacion(idplaneacion) VALUES (NULL)";
+    mysqli_query($conex,$queryMain);
+
+    // Consulta que recupera el último valor de id
+    $consultaP = "SELECT MAX(idplaneacion) AS max_id FROM planeacion";
+    $result = mysqli_query($conex, $consultaP);
+    $row = mysqli_fetch_assoc($result);
+    $maxId = $row['max_id'];
+    
+    $query = "INSERT INTO usuarios (correo, clave, nombre, planeacion_idplaneacion) VALUES ('$correo', '$contrasena', '$usuario', '$maxId')";
     $resultado = mysqli_query($conex,$query);
 
     if($resultado)

@@ -1,11 +1,4 @@
 <?php
-if (isset($_POST["idReceta"])) {
-	$idReceta = $_POST["idReceta"];
-	echo "El ID de la receta es: " . $idReceta;
-  } else {
-	echo "No se recibió el ID de la receta.";
-  }
-  
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -14,11 +7,19 @@ $dbname = "recetasDB";
 // Conexión a la base de datos
 $conn = mysqli_connect($servername, $username, $password, $dbname);
 
+if (isset($_POST["idReceta"])) {
+	$idReceta = $_POST["idReceta"];
+	//echo "El ID de la receta es: " . $idReceta;
+  } else {
+	echo "No se recibió el ID de la receta.";
+  }
+  
+
 // Obtener los valores actuales de la base de datos
-$resultadonombre = mysqli_query($conn, "SELECT nombre FROM recetas WHERE idRecetas = 1");
-$resultadoduracion = mysqli_query($conn, "SELECT duracion FROM recetas WHERE idRecetas = 1");
-$resultadoporcion = mysqli_query($conn, "SELECT porciones FROM recetas WHERE idRecetas = 1");
-$resultadotc = mysqli_query($conn, "SELECT tiempo_comida FROM recetas WHERE idRecetas = 1");
+$resultadonombre = mysqli_query($conn, "SELECT nombre FROM recetas WHERE idRecetas = $idReceta");
+$resultadoduracion = mysqli_query($conn, "SELECT duracion FROM recetas WHERE idRecetas = $idReceta");
+$resultadoporcion = mysqli_query($conn, "SELECT porciones FROM recetas WHERE idRecetas = $idReceta");
+$resultadotc = mysqli_query($conn, "SELECT tiempo_comida FROM recetas WHERE idRecetas = $idReceta");
 
 
 $nombre = mysqli_fetch_assoc($resultadonombre)["nombre"];
@@ -98,15 +99,15 @@ mysqli_close($conn);
 						<div class="menu_section">
 							<ul class="nav side-menu">
 								<li><a href="#"><i class="fa fa-home"></i> Inicio</a></li>
-                                <li><a><i class="fa fa-birthday-cake"></i> Mis recetas</a></li>
+								<li><a href="misRecetas.html"><i class="fa fa-birthday-cake"></i> Mis recetas</a></li>
 								<li><a><i class="fa fa-group"></i> Grupos <span class="fa fa-chevron-down"></span></a>
 									<ul class="nav child_menu">
 										<li><a href="#">Familia</a></li>
 										<li><a href="#">Amigos</a></li>
 									</ul>
 								</li>
-								<li><a><i class="fa fa-list-alt"></i> Planeación de recetas</a></li>
-                                <li><a><i class="fa fa-money"></i> Lista de compras</a></li>
+								<li><a href="planeacion.html"><i class="fa fa-list-alt"></i> Planeación de recetas</a></li>
+								<li><a href="#"><i class="fa fa-money"></i> Lista de compras</a></li>
 							</ul>
 						</div>
 					</div>
@@ -145,12 +146,12 @@ mysqli_close($conn);
 									<div class="clearfix"></div>
 								</div>
 								<div class="x_content">
-									<form id="demo-form" data-parsley-validate action="\\ComidayCompras/Proyecto/php/actualizar.php" method="post">                                        
+									<form id="demo-form" data-parsley-validate >                                        
                                         <div class="form-group row">
 											<label class="col-form-label col-md-12 col-sm-12 "></label>
 											<div class="col-md-10 col-sm-10 ">
                                                 <label for="fullname">Nombre</label>
-												<input type="text" name="nombre" class="form-control" placeholder="<?php echo $nombre; ?>">
+												<input type="text" id="nombrereceta" class="form-control" placeholder="<?php echo $nombre; ?>">
                                                                                                                                              
 											</div>
                                             <div class="col-md-2 col-sm-2 " align="center">
@@ -163,21 +164,27 @@ mysqli_close($conn);
 											<label class="col-form-label col-md-12 col-sm-12 "></label>
 											<div class="col-md-6 col-sm-6 ">
                                                 <label for="fullname">Ingrediente</label>
-												<input type="text" class="form-control" placeholder="Nombre del ingrediente">
+												<input type="text" name="ingredientes" id="autocomplete-custom-append"
+													class="form-control" placeholder="Nombre del ingrediente">
                                                 <div class="form-group row">
                                                     <label class="col-form-label col-md-12 col-sm-12 "></label>
                                                     <div class="col-md-6 col-sm-6 ">
                                                         <label for="fullname">Cantidad</label>
-                                                        <input type="text" class="form-control" placeholder="Cantidad del ingrediente">
+                                                        <input type="text" id="cantidad" class="form-control" placeholder="Cantidad del ingrediente">
                                                     </div>
                                                     <div class="col-md-6 col-sm-6 ">
-                                                        <label for="fullname">Unidad de medida</label>
-                                                        <select id="unidad_medida" class="form-control">
-                                                            <option value="">Elige...</option>
-                                                            <option value="">Gramos (gr.)</option>
-                                                            <option value="">Piezas (pzs)</option>
-                                                            <option value="">Litros (l)</option>
-                                                        </select>
+													<label for="fullname">Unidad de medida</label>
+														<select id="unidad_medida" class="form-control">
+															<option value="">Elige...</option>
+															<option value="Piezas">Pieza(s)</option>
+															<option value="Kilogramo(s)">Kilogramo(s)</option>
+															<option value="Gramos">Gramos</option>
+															<option value="Litros">Litro(s)</option>
+															<option value="Mililitros">Mililitros</option>
+															<option value="Taza(s)">Taza(s)</option>
+															<option value="Cucharada(s)">Cucharada(s)</option>
+															<option value="Cucharadita(s)">Cucharadita(s)</option>
+														</select>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
@@ -190,25 +197,13 @@ mysqli_close($conn);
                                                 </div>
                                                                                              
 											</div>
-                                            <div class="col-md-6 col-sm-6 ">
-                                                <label for="fullname">Lista de ingredientes</label>
-												<table class="col-md-12 col-sm-12 " style="padding: 15px;">
+											<div class="col-md-6 col-sm-6 ">
+												<label for="fullname">Lista de ingredientes</label>
+												<table class="col-md-12 col-sm-12 " id="listaingredientes">
 													<tr>
-														<td class="col-md-1 col-sm-1"><i type="button" class="fa fa-times-circle-o" align="right" style="color: rgb(255, 0, 89);"></i></td>
-														<td class="col-md-11 col-sm-11" type="button">Huevo (3 piezas)</td>
+
 													</tr>
-													<tr>
-														<td class="col-md-1 col-sm-1"><i type="button" class="fa fa-times-circle-o" align="right" style="color: rgb(255, 0, 89);"></i></td>
-														<td class="col-md-11 col-sm-11" type="button">Harina (350 gr.)</td>
-													</tr>
-													<tr>
-														<td class="col-md-1 col-sm-1"><i type="button" class="fa fa-times-circle-o" align="right" style="color: rgb(255, 0, 89);"></i></td>
-														<td class="col-md-11 col-sm-11" type="button">Azúcar (250 gr.)</td>
-													</tr>
-													<tr>
-														<td class="col-md-1 col-sm-1"><i type="button" class="fa fa-times-circle-o" align="right" style="color: rgb(255, 0, 89);"></i></td>
-														<td class="col-md-11 col-sm-11" type="button">Yogur natural (125 gr.)</td>
-													</tr>
+
 												</table>
 											</div>
 										</div>
@@ -217,46 +212,38 @@ mysqli_close($conn);
 
                                         <div class="form-group row">
 											<div class="col-md-6 col-sm-6 ">
-                                                <div class="form-group row">
-                                                    <div class="col-md-4 col-sm-4 ">
-                                                        <label for="fullname">No. de paso</label>
-                                                        <input type="text" class="form-control" placeholder="No. de paso">
-                                                    </div>
-                                                    <div class="col-md-8 col-sm-8 ">
-                                                        <label for="fullname">Imagen de apoyo</label>
-                                                        <input type="file">
-                                                    </div>
-                                                </div>
-                                                <label for="fullname">Paso</label>
-												<textarea class="form-control" rows="2" placeholder="Explicación"></textarea>
-                                                
-                                                <div class="form-group row"></div>
-                                                <div class="form-group row">
-                                                    <div class="col-md-6 col-sm-6 ">
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6 " align="right">
-                                                        <button type="button" class="btn btn-primary">Agregar</button>
-                                                    </div>                                                      
-                                                </div>                                     
+												<div class="form-group row">
+													<div class="col-md-4 col-sm-4 ">
+														<label for="fullname">No. de paso</label>
+														<input type="text" class="form-control" id="nopaso"
+															placeholder="No. de paso">
+													</div>
+													<div class="col-md-8 col-sm-8 ">
+														<label for="fullname">Imagen de apoyo</label>
+														<input type="file" id="imgpaso">
+													</div>
+												</div>
+												<label for="fullname">Paso</label>
+												<textarea class="form-control" rows="2" id="paso"
+													placeholder="Explicación"></textarea>
+
+												<div class="form-group row"></div>
+												<div class="form-group row">
+													<div class="col-md-6 col-sm-6 ">
+													</div>
+													<div class="col-md-6 col-sm-6 " align="right">
+														<button type="button" id="agregarpro"
+															class="btn btn-primary">Agregar</button>
+													</div>
+												</div>
 											</div>
-                                            
-                                            <div class="col-md-6 col-sm-6 ">
-                                                <label for="fullname">Procedimiento</label>
-                                                <table class="col-md-12 col-sm-12 " style="padding: 15px;">
+
+											<div class="col-md-6 col-sm-6 ">
+												<label for="fullname">Procedimiento</label>
+												<table class="col-md-12 col-sm-12 " id="procedimiento">
 													<tr>
-														<td class="col-md-1 col-sm-1"><i type="button" class="fa fa-times-circle-o" align="right" style="color: rgb(255, 0, 89);"></i></td>
-														<td class="col-md-11 col-sm-11" type="button" >
-															1. En un recipiente de regular tamaño bate el azúcar con los huevos, puedes hacerlo a mano o utilizar una batidora eléctrica, el único requerimiento es hacerlo hasta que la mezcla crezca hasta casi el doble.
-															<br>
-															<!-- <img style="width: 30%; display: block;" src="../img/3.png" alt="image" /> -->
-														</td>
+
 													</tr>
-													<tr>
-														<td class="col-md-1 col-sm-1"><i type="button" class="fa fa-times-circle-o" align="right" style="color: rgb(255, 0, 89);"></i></td>
-														<td class="col-md-11 col-sm-11" type="button">2. Agrega el aceite y luego el yogur.
-															<br>
-															<!-- <img style="width: 30%; display: block;" src="../img/3.png" alt="image" /> -->
-														</td>
 												</table>
 											</div>
 										</div>
@@ -265,14 +252,14 @@ mysqli_close($conn);
 											<div class="col-md-6 col-sm-6 ">
                                                 <label class="col-form-label col-md-3 col-sm-3 ">Duración (min)</label>
                                                 <div class="col-md-9 col-sm-9 ">
-                                                    <input type="text" name="duracion" class="form-control" placeholder="<?php echo $duracion; ?>">
+                                                    <input type="text" id="rduracion" class="form-control" placeholder="<?php echo $duracion; ?>">
                                                 </div>                               
 											</div>
                                             
                                             <div class="col-md-6 col-sm-6 ">
                                                 <label class="col-form-label col-md-3 col-sm-3 ">Porciones</label>
                                                 <div class="col-md-9 col-sm-9 ">
-                                                    <input type="text" name="porciones" class="form-control" placeholder="<?php echo $porciones; ?>">
+                                                    <input type="text" id="rporcion" class="form-control" placeholder="<?php echo $porciones; ?>">
                                                 </div>                               
 											</div>
 										</div>
@@ -281,7 +268,7 @@ mysqli_close($conn);
 											<div class="col-md-6 col-sm-6 ">
                                                 <label class="col-form-label col-md-3 col-sm-3 ">Tiempo de comida</label>
                                                 <div class="col-md-9 col-sm-9 ">
-                                                    <select id="unidad_medida" name="tiempo_comida" class="form-control">
+                                                    <select id="rtiempo" name="tiempo_comida" class="form-control">
                                                         <option value="">Elige...</option>
                                                         <option value="Desayuno">Desayuno</option>
                                                         <option value="Almuerzo">Almuerzo</option>
@@ -295,7 +282,7 @@ mysqli_close($conn);
                                             <div class="col-md-6 col-sm-6 ">
                                                 <label class="col-form-label col-md-3 col-sm-3 ">Tipo de receta</label>
                                                 <div class="col-md-9 col-sm-9 ">
-                                                    <select id="unidad_medida" name="tipo_comida" class="form-control">
+                                                    <select id="rtipo" name="tipo_comida" class="form-control">
                                                         <option value="">Elige...</option>
                                                         <option value="Entrada">Entrada</option>
                                                         <option value="Principal">Principal</option>
@@ -314,14 +301,14 @@ mysqli_close($conn);
 											<div class="col-md-6 col-sm-6 ">
                                                 <label class="col-form-label col-md-3 col-sm-3 ">Producto final</label>
                                                 <div class="col-md-9 col-sm-9 ">
-                                                    <input type="file">
+                                                    <input type="file" id="rimg">
                                                 </div>                               
 											</div>
                                             
                                             <div class="col-md-6 col-sm-6 ">
                                                 <label class="col-form-label col-md-3 col-sm-3 "></label>
                                                 <div class="col-md-9 col-sm-9 "align="right">
-                                                    <button type="button" class="btn btn-success" >Actualizar receta</button>                                                    
+                                                    <button type="button" class="btn btn-success" id="guardarreceta">Actualizar receta</button>                                                    
                                                 </div>                               
 											</div>
 										</div>
@@ -345,6 +332,7 @@ mysqli_close($conn);
 		</div>
 	</div>
 
+	<iframe src="../php/session.php" style="display: none;"></iframe>
 	<!-- jQuery -->
 	<script src="../../gentelella-master/vendors/jquery/dist/jquery.min.js"></script>
 	<!-- Bootstrap -->
@@ -381,6 +369,27 @@ mysqli_close($conn);
 	<!-- starrr -->
 	<script src="../../gentelella-master/vendors/starrr/dist/starrr.js"></script>
 	<!-- Custom Theme Scripts -->
-	<script src="../../gentelella-master/build/js/custom.min.js"></script>
+	<!--<script src="../../gentelella-master/build/js/custom.min.js"></script>-->
+	<!-- Input de ingredientes autocompletar-->
+	<script type="module" src="../js/ingredientes.js"></script>
+	<!-- Input de procedimiento para añadir a tabla-->
+	<script type="module" src="../js/procedimiento.js"></script>
+	<!-- Input de procedimiento para añadir a tabla-->
+	<script type="module" src="../js/receta.js"></script>
+	<!--Para saber si existe la sesion o el correo-->
+	<script>
+		//Existe la session iniciada, sino redirigir a que inicie sesion
+		async function session() {
+			const response = await fetch("../php/session.php");
+			const data = await response.json();
+			const user = data.correo;
+			if(user == null){
+				window.location.replace("../html/index.html");
+			}
+			
+			return user;
+		}
+		session();
+		</script>
 
 </body></html>

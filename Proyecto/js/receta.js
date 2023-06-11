@@ -418,5 +418,5 @@ async function comprobarTablas() {
 
 async function final() {
     alert("Se guardó la receta");
-    window.location.href = "./createReceta.html";
+    window.location.href = "./misRecetas.html";
 }

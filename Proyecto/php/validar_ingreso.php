@@ -18,7 +18,7 @@ $filas=mysqli_num_rows($resultado);
 
 if($filas)
 {
-    header("location:../html/readReceta.php");
+    header("location:../html/misRecetas.html");
 }
 else{
     echo "<script>
