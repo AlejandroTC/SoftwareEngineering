@@ -38,9 +38,9 @@ function obtenerDetallesReceta(idReceta) {
             llenarcampos(
                 data[0].nombre,
                 data[0].duracion,
+                data[0].porciones,
                 data[0].tiempo_comida,
-                data[0].tiempo_receta,
-                data[0].porciones
+                data[0].tiempo_receta
             );
         })
         .catch((error) => console.log(error));

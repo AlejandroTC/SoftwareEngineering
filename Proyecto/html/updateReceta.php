@@ -236,14 +236,14 @@ if (isset($_POST["idReceta"])) {
 											<div class="col-md-6 col-sm-6 ">
                                                 <label class="col-form-label col-md-3 col-sm-3 ">Duración (min)</label>
                                                 <div class="col-md-9 col-sm-9 ">
-                                                    <input type="text" id="rduracion" class="form-control" placeholder="<?php echo $duracion; ?>">
+                                                    <input type="text" id="rduracion" class="form-control">
                                                 </div>                               
 											</div>
                                             
                                             <div class="col-md-6 col-sm-6 ">
                                                 <label class="col-form-label col-md-3 col-sm-3 ">Porciones</label>
                                                 <div class="col-md-9 col-sm-9 ">
-                                                    <input type="text" id="rporcion" class="form-control" placeholder="<?php echo $porciones; ?>">
+                                                    <input type="text" id="rporcion" class="form-control">
                                                 </div>                               
 											</div>
 										</div>
@@ -256,7 +256,7 @@ if (isset($_POST["idReceta"])) {
                                                         <option value="">Elige...</option>
                                                         <option value="Desayuno">Desayuno</option>
                                                         <option value="Almuerzo">Almuerzo</option>
-                                                        <option value="Comida" selected>Comida</option>
+                                                        <option value="Comida" >Comida</option>
                                                         <option value="Merienda">Merienda</option>
                                                         <option value="Cena">Cena</option>
                                                     </select>
@@ -273,7 +273,7 @@ if (isset($_POST["idReceta"])) {
                                                         <option value="Botanas">Botanas</option>
                                                         <option value="Bebidas">Bebidas</option>
                                                         <option value="Sopas y ensaladas">Sopas y ensaladas</option>
-                                                        <option value="Postres" selected>Postres</option>
+                                                        <option value="Postres" >Postres</option>
                                                         <option value="Aperitivos">Aperitivos</option>
                                                     </select>  
                                                 </div>                               
