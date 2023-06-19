@@ -7,13 +7,9 @@
         {
             "type": "msedge",
             "request": "launch",
-            "name": "Launch",
-            "url": "localhost/b/Proyecto/html/index.html",
-            "webRoot": "${workspaceFolder}",
-            "skipFiles": [
-                "node_modules/**/*.js",
-                "${workspaceFolder}/build/**/*.js"
-            ]
+            "name": "Launch Edge against localhost",
+            "url": "http://localhost/",
+            "webRoot": "${workspaceFolder}"
         }
     ]
 }

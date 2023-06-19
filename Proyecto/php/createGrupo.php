@@ -13,7 +13,9 @@ try {
     $name = $_POST['nombre'];
     $code = $_POST['clave'];
     $description = $_POST['descripcion'];
-    $rimg = $_FILES['imagen']['tmp_name'];
+    $gimg = $_FILES['imagen']['tmp_name'];
+    $correo = $_POST['correo'];
+
     
     // Consulta para agregar la planeación asociada al grupo a crear
     $queryMain = "INSERT INTO planeacion(idplaneacion) VALUES (NULL)";
@@ -29,7 +31,7 @@ try {
     $stmt->bindValue(':nombre', $name);
     $stmt->bindValue(':clave', $code);
     $stmt->bindValue(':descripcion', $description);
-    $stmt->bindValue(':imagen', file_get_contents($rimg));
+    $stmt->bindValue(':imagen', file_get_contents($gimg));
     $stmt->bindValue(':planeacion_idplaneacion', $maxId);
     
     // Ejecutar la consulta
@@ -38,6 +40,14 @@ try {
     // Comprobar si la consulta se ejecutó correctamente
     if ($stmt->rowCount() > 0) {
         echo 'El grupo se ha creado';
+        $idGrupo = $conn->lastInsertId();
+        echo $idGrupo;
+        echo $correo;
+        $queryMain = "INSERT INTO usuario_has_grupo (id_grupo, correo_usuario, rol) VALUES (:idgrupo, :correo, 'admin')";
+        $stmt2 = $conn->prepare($queryMain);
+        $stmt2->bindValue(':idgrupo', $idGrupo);
+        $stmt2->bindValue(':correo', $correo);
+        $stmt2->execute();
     } else {
         echo 'No se ha creado el grupo';
     }

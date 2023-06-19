@@ -102,20 +102,23 @@ async function actionCreate() {
     }
 }
 
-function crearGrupo(nombre, codigo, descripcion, blob) {
+async function crearGrupo(nombre, codigo, descripcion, blob) {
     // Crear el objeto FormData y agregar los campos
     const formData = new FormData();
     formData.append("nombre", nombre);
     formData.append("clave", codigo);
     formData.append("descripcion", descripcion);
     formData.append("imagen", blob, "imagen.jpg");
+    const email = await obtenerCorreo();
+    formData.append("correo", email);
 
     fetch("../php/createGrupo.php", {
         method: "POST",
         body: formData
     })
-        .then((response) => {
+        .then(async (response) => {
             console.log("Se añadió el grupo"); // Mostrar en la consola que se añadió
+            await final();
             // Realizar las acciones adicionales después de añadir el grupo
         })
         .catch((error) => {
@@ -124,46 +127,6 @@ function crearGrupo(nombre, codigo, descripcion, blob) {
 }
 
 //----------------UPDATE-----------------
-function cambiarBotonAgregar(id) {
-    var btnAgregarIn = document.getElementById("agregarin");
-
-    if (btnAgregarIn.innerText === "Agregar") {
-        let idingredientes = id;
-        // Cambiar el texto y la función
-        btnAgregarIn.innerText = "Actualizar";
-        $.ajax({
-            method: "POST",
-            url: "../php/crud_ingredientesex.php",
-            data: {
-                id: idingredientes,
-                accion: "read_id"
-            },
-            success: function (respuesta) {
-                JSONRespuesta = JSON.parse(respuesta);
-                if (JSONRespuesta.estado == 1) {
-                    let nom_ingrediente = document.getElementById(
-                        "autocomplete-custom-append"
-                    );
-                    nom_ingrediente.value = JSONRespuesta.nombre_ingrediente;
-                    let cantidad = document.getElementById("cantidad");
-                    cantidad.value = JSONRespuesta.cantidad;
-                    let unidad = document.getElementById("unidad_medida");
-                    unidad.value = JSONRespuesta.unidad_medida;
-                } else {
-                    alert("Registro no encontrado");
-                }
-            }
-        });
-        btnAgregarIn.onclick = function () {
-            actionUpdate(idingredientes);
-        };
-    } else {
-        // Restaurar el texto y la función originales
-        btnAgregarIn.innerText = "Agregar";
-        btnAgregarIn.onclick = actionCreate;
-    }
-}
-
 async function actionUpdate(id) {
     let nom_ingrediente = document.getElementById(
         "autocomplete-custom-append"
@@ -233,12 +196,6 @@ async function actionUpdate(id) {
 
 //Cerar el formulario
 function Cerrar() {
-    var btnAgregar = document.getElementById("agregar");
-
-    if (btnAgregar.innerText === "Actualizar") {
-        btnAgregar.innerText = "Agregar";
-        btnAgregar.onclick = actionCreate;
-    }
     limpiarpagina();
 }
 
@@ -255,4 +212,9 @@ async function obtenerCorreo() {
     const data = await response.json();
     const user = data.correo;
     return user;
+}
+
+async function final() {
+    alert("Se guardó la receta");
+    window.location.href = "./misGrupos.html";
 }
