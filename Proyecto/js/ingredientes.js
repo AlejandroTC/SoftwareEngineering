@@ -7,6 +7,7 @@ fetch("../php/ingredientes.php") //Pedimos en la base de datos los ingredientes 
     })
     .catch((error) => console.error(error));
 //Codigo para agregar a la tabla
+
 const ingres = {}; //Arreglo de ingredientes
 let Addingre = document.getElementById("agregarin"); //Definimos el boton
 Addingre.onclick = async function () {

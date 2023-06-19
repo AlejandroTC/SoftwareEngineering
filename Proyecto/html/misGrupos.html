@@ -514,8 +514,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" id="agregar" class="btn btn-primary"
-                                onclick="actionCreate()">Crear</button>
+                            <button type="button" id="agregar" class="btn btn-primary" >Crear</button>
                             <button type="button" class="btn btn-secondary" data-dismiss="modal"
                                 onclick="Cerrar()">Cerrar</button>
                         </div>
@@ -555,9 +554,10 @@
     <!-- Custom Theme Scripts -->
     <script src="../../gentelella-master/build/js/custom.min.js"></script>
     <!--Para saber si existe la sesion o el correo-->
+    <script src="../js/crudGrupos.js"></script>
     <script type="module" src="../js/grupos.js"></script>
     <script type="module" src="../js/misGrupos.js"></script>
-    <script src="../js/crudGrupos.js"></script>
+    
     <script>
         //Existe la session iniciada, sino redirigir a que inicie sesion
         async function session() {

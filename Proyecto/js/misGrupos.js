@@ -97,10 +97,6 @@ async function llenarGrupos() {
         const aEye = document.createElement("a");
         aEye.href = "#";
         aEye.innerHTML = '<i class="fa fa-eye"></i>';
-        aEye.setAttribute("data-toggle", "modal");
-        aEye.setAttribute("data-target", "#modal_ingredientes");
-        aEye.setAttribute("align", "right");
-        aEye.setAttribute("onclick", "actionRead()");
         liEye.appendChild(aEye);
 
         const liImg = document.createElement("li");
@@ -114,6 +110,10 @@ async function llenarGrupos() {
             const aPencil = document.createElement("a");
             aPencil.href = "#";
             aPencil.innerHTML = '<i class="fa fa-pencil"></i>';
+            aPencil.setAttribute("data-toggle", "modal");
+            aPencil.setAttribute("data-target", "#modal_nuevo_grupo");
+            aPencil.setAttribute("align", "right");
+            aPencil.setAttribute("onclick", "actionUpdate(" + grupo.getId() + ")");
             liPencil.appendChild(aPencil);
             ulWidgetProfileBox.appendChild(liEye);
             ulWidgetProfileBox.appendChild(liImg);

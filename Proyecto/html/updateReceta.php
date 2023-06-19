@@ -8,28 +8,12 @@ $dbname = "recetasDB";
 $conn = mysqli_connect($servername, $username, $password, $dbname);
 
 if (isset($_POST["idReceta"])) {
-	$idReceta = $_POST["idReceta"];
-	//echo "El ID de la receta es: " . $idReceta;
-  } else {
-	echo "No se recibió el ID de la receta.";
-  }
-  
+    $idReceta = $_POST["idReceta"];
+    echo "<script>var idReceta = " . json_encode($idReceta) . ";</script>";
+} else {
+    echo "<script>var idReceta = null;</script>";
+}
 
-// Obtener los valores actuales de la base de datos
-$resultadonombre = mysqli_query($conn, "SELECT nombre FROM recetas WHERE idRecetas = $idReceta");
-$resultadoduracion = mysqli_query($conn, "SELECT duracion FROM recetas WHERE idRecetas = $idReceta");
-$resultadoporcion = mysqli_query($conn, "SELECT porciones FROM recetas WHERE idRecetas = $idReceta");
-$resultadotc = mysqli_query($conn, "SELECT tiempo_comida FROM recetas WHERE idRecetas = $idReceta");
-
-
-$nombre = mysqli_fetch_assoc($resultadonombre)["nombre"];
-$duracion = mysqli_fetch_assoc($resultadoduracion)["duracion"];
-$porciones = mysqli_fetch_assoc($resultadoporcion)["porciones"];
-$tiempoc = mysqli_fetch_assoc($resultadotc)["tiempo_comida"];
-
-
-// Cerrar la conexión a la base de datos
-mysqli_close($conn);
 ?>
 
 <!DOCTYPE html>
@@ -124,7 +108,7 @@ mysqli_close($conn);
 					<nav class="nav navbar-nav">
 						<ul class=" navbar-right">
 							<li class="nav-item dropdown open" style="padding-left: 15px;">
-								<button type="button" class="btn btn-primary btn-sm">Log out</button>
+								<button type="button" class="btn btn-primary btn-sm" id='logout'>Log out</button>
 							</li>
 						</ul>
 					</nav>
@@ -151,7 +135,7 @@ mysqli_close($conn);
 											<label class="col-form-label col-md-12 col-sm-12 "></label>
 											<div class="col-md-10 col-sm-10 ">
                                                 <label for="fullname">Nombre</label>
-												<input type="text" id="nombrereceta" class="form-control" placeholder="<?php echo $nombre; ?>">
+												<input type="text" id="nombrereceta" class="form-control"></labe>
                                                                                                                                              
 											</div>
                                             <div class="col-md-2 col-sm-2 " align="center">
@@ -192,7 +176,7 @@ mysqli_close($conn);
                                                         
                                                     </div>
                                                     <div class="col-md-6 col-sm-6 " align="right">
-                                                        <button type="button" class="btn btn-primary">Agregar</button>
+                                                        <button type="button" class="btn btn-primary" id='agregarin'>Agregar</button>
                                                     </div>                                                      
                                                 </div>
                                                                                              
@@ -308,7 +292,7 @@ mysqli_close($conn);
                                             <div class="col-md-6 col-sm-6 ">
                                                 <label class="col-form-label col-md-3 col-sm-3 "></label>
                                                 <div class="col-md-9 col-sm-9 "align="right">
-                                                    <button type="button" class="btn btn-success" id="guardarreceta">Actualizar receta</button>                                                    
+                                                    <button type="button" class="btn btn-success" id="actualizar">Actualizar receta</button>                                                    
                                                 </div>                               
 											</div>
 										</div>
@@ -375,7 +359,7 @@ mysqli_close($conn);
 	<!-- Input de procedimiento para añadir a tabla-->
 	<script type="module" src="../js/procedimiento.js"></script>
 	<!-- Input de procedimiento para añadir a tabla-->
-	<script type="module" src="../js/receta.js"></script>
+	<script type="module" src="../js/updateReceta.js"></script>
 	<!--Para saber si existe la sesion o el correo-->
 	<script>
 		//Existe la session iniciada, sino redirigir a que inicie sesion
@@ -391,5 +375,4 @@ mysqli_close($conn);
 		}
 		session();
 		</script>
-
 </body></html>

@@ -8,7 +8,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 	<title>Comida y Compras</title>
-
+	<script src="../js/updateReceta.js"></script>
 	<!-- Bootstrap -->
 	<link href="../../gentelella-master/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 	<!-- Font Awesome -->
@@ -90,7 +90,7 @@
 					<nav class="nav navbar-nav">
 						<ul class=" navbar-right">
 							<li class="nav-item dropdown open" style="padding-left: 15px;">
-								<button type="button" class="btn btn-primary btn-sm">Log out</button>
+								<button type="button" class="btn btn-primary btn-sm" id="logout">Log out</button>
 							</li>
 						</ul>
 					</nav>
@@ -108,39 +108,38 @@
 						<div class="col-md-12 col-sm-12 ">
 							<div class="x_panel">
 								<div class="x_title">
-									<h3>Modificar receta</h3>
+									<h3>Crear receta</h3>
 									<div class="clearfix"></div>
 								</div>
 								<div class="x_content">
-									<form id="demo-form" data-parsley-validate>                                        
-                                        <div class="form-group row">
+									<form id="demo-form" data-parsley-validate>
+										<div class="form-group row">
 											<label class="col-form-label col-md-12 col-sm-12 "></label>
-											<div class="col-md-10 col-sm-10 ">
-                                                <label for="fullname">Nombre de la receta</label>
-												<input type="text" class="form-control" placeholder="Bizcocho casero de yogur">
-                                                                                                                                             
-											</div>
-                                            <div class="col-md-2 col-sm-2 " align="center">
-												<label for="fullname">¿Ya no te interesa?</label>
-												<button type="button" class="btn btn-danger">Eliminar receta</button>
+											<div class="col-md-12 col-sm-12 ">
+												<label for="fullname">Nombre de la receta</label>
+												<input type="text" class="form-control"
+													placeholder="Nombre de la receta" id="nombrereceta">
 											</div>
 										</div>
 
-                                        <div class="form-group row">
+										<div class="form-group row">
 											<label class="col-form-label col-md-12 col-sm-12 "></label>
 											<div class="col-md-6 col-sm-6 ">
-                                                <label for="fullname">Ingrediente</label>
-												<input type="text" class="form-control" placeholder="Nombre del ingrediente">
-                                                <div class="form-group row">
-                                                    <label class="col-form-label col-md-12 col-sm-12 "></label>
-                                                    <div class="col-md-6 col-sm-6 ">
-                                                        <label for="fullname">Cantidad</label>
-                                                        <input type="text" class="form-control" placeholder="Cantidad">
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6 ">
-                                                        <label for="fullname">Unidad de medida</label>
-                                                        <select id="unidad_medida" class="form-control">
-                                                            <option value="">Elige...</option>
+												<label for="fullname">Ingrediente</label>
+												<input type="text" name="ingredientes" id="autocomplete-custom-append"
+													class="form-control" placeholder="Nombre del ingrediente">
+												<ul class="list"></ul>
+												<div class="form-group row">
+													<label class="col-form-label col-md-12 col-sm-12 "></label>
+													<div class="col-md-6 col-sm-6 ">
+														<label for="fullname">Cantidad</label>
+														<input type="text" class="form-control" id="cantidad"
+															placeholder="Cantidad del ingrediente">
+													</div>
+													<div class="col-md-6 col-sm-6 ">
+														<label for="fullname">Unidad de medida</label>
+														<select id="unidad_medida" class="form-control">
+															<option value="">Elige...</option>
 															<option value="Piezas">Pieza(s)</option>
 															<option value="Kilogramo(s)">Kilogramo(s)</option>
 															<option value="Gramos">Gramos</option>
@@ -149,153 +148,137 @@
 															<option value="Taza(s)">Taza(s)</option>
 															<option value="Cucharada(s)">Cucharada(s)</option>
 															<option value="Cucharadita(s)">Cucharadita(s)</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group row">
-                                                    <div class="col-md-6 col-sm-6 ">
-                                                        
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6 " align="right">
-                                                        <button type="button" class="btn btn-primary" id="agregarin">Agregar</button>
-                                                    </div>                                                      
-                                                </div>
-                                                                                             
+														</select>
+													</div>
+												</div>
+												<div class="form-group row">
+													<div class="col-md-6 col-sm-6 ">
+
+													</div>
+													<div class="col-md-6 col-sm-6 " align="right">
+														<button type="button" id="agregarin"
+															class="btn btn-primary">Agregar</button>
+													</div>
+												</div>
+
 											</div>
-                                            <div class="col-md-6 col-sm-6 ">
-                                                <label for="fullname">Lista de ingredientes</label>
-												<table class="col-md-12 col-sm-12 " style="border: solid #84cc16; padding: 15px;">
+											<div class="col-md-6 col-sm-6 ">
+												<label for="fullname">Lista de ingredientes</label>
+												<table class="col-md-12 col-sm-12 " id="listaingredientes">
 													<tr>
-														<td class="col-md-1 col-sm-1"><i type="button" class="fa fa-times-circle-o" align="right" style="color: rgb(255, 0, 89);"></i></td>
-														<td class="col-md-11 col-sm-11" type="button">Huevo (3 piezas)</td>
+
 													</tr>
+
+												</table>
+											</div>
+										</div>
+
+
+
+										<div class="form-group row">
+											<div class="col-md-6 col-sm-6 ">
+												<div class="form-group row">
+													<div class="col-md-4 col-sm-4 ">
+														<label for="fullname">No. de paso</label>
+														<input type="text" class="form-control" id="nopaso"
+															placeholder="No. de paso">
+													</div>
+													<div class="col-md-8 col-sm-8 ">
+														<label for="fullname">Imagen de apoyo</label>
+														<input type="file" id="imgpaso">
+													</div>
+												</div>
+												<label for="fullname">Paso</label>
+												<textarea class="form-control" rows="2" id="paso"
+													placeholder="Explicación"></textarea>
+
+												<div class="form-group row"></div>
+												<div class="form-group row">
+													<div class="col-md-6 col-sm-6 ">
+													</div>
+													<div class="col-md-6 col-sm-6 " align="right">
+														<button type="button" id="agregarpro"
+															class="btn btn-primary">Agregar</button>
+													</div>
+												</div>
+											</div>
+
+											<div class="col-md-6 col-sm-6 ">
+												<label for="fullname">Procedimiento</label>
+												<table class="col-md-12 col-sm-12 " id="procedimiento">
 													<tr>
-														<td class="col-md-1 col-sm-1"><i type="button" class="fa fa-times-circle-o" align="right" style="color: rgb(255, 0, 89);"></i></td>
-														<td class="col-md-11 col-sm-11" type="button">Harina (350 gr.)</td>
-													</tr>
-													<tr>
-														<td class="col-md-1 col-sm-1"><i type="button" class="fa fa-times-circle-o" align="right" style="color: rgb(255, 0, 89);"></i></td>
-														<td class="col-md-11 col-sm-11" type="button">Azúcar (250 gr.)</td>
-													</tr>
-													<tr>
-														<td class="col-md-1 col-sm-1"><i type="button" class="fa fa-times-circle-o" align="right" style="color: rgb(255, 0, 89);"></i></td>
-														<td class="col-md-11 col-sm-11" type="button">Yogur natural (125 gr.)</td>
+
 													</tr>
 												</table>
 											</div>
 										</div>
 
-                                        
-
-                                        <div class="form-group row">
+										<div class="form-group row">
 											<div class="col-md-6 col-sm-6 ">
-                                                <div class="form-group row">
-                                                    <div class="col-md-4 col-sm-4 ">
-                                                        <label for="fullname">No. de paso</label>
-                                                        <input type="text" class="form-control" placeholder="3">
-                                                    </div>
-                                                    <div class="col-md-8 col-sm-8 ">
-                                                        <label for="fullname">Imagen de apoyo</label>
-                                                        <input type="file">
-                                                    </div>
-                                                </div>
-                                                <label for="fullname">Paso</label>
-												<textarea class="form-control" rows="2" placeholder="Mezcla hasta que todos los ingredientes se integren..."></textarea>
-                                                
-                                                <div class="form-group row"></div>
-                                                <div class="form-group row">
-                                                    <div class="col-md-6 col-sm-6 ">
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6 " align="right">
-                                                        <button type="button" class="btn btn-primary" id="agregarpro">Agregar</button>
-                                                    </div>                                                      
-                                                </div>                                     
+												<label class="col-form-label col-md-3 col-sm-3 ">Duración (min)</label>
+												<div class="col-md-9 col-sm-9 ">
+													<input type="text" id="rduracion" class="form-control"
+														placeholder="Tiempo total de preparación">
+												</div>
 											</div>
-                                            
-                                            <div class="col-md-6 col-sm-6 ">
-                                                <label for="fullname">Procedimiento</label>
-                                                <textarea class="form-control" rows="7" placeholder=" "></textarea>
-                                                <table class="col-md-12 col-sm-12 " style="border: solid #84cc16; padding: 15px;">
-													<tr>
-														<td class="col-md-1 col-sm-1"><i type="button" class="fa fa-times-circle-o" align="right" style="color: rgb(255, 0, 89);"></i></td>
-														<td class="col-md-11 col-sm-11" type="button" >
-															1. En un recipiente de regular tamaño bate el azúcar con los huevos, puedes hacerlo a mano o utilizar una batidora eléctrica, el único requerimiento es hacerlo hasta que la mezcla crezca hasta casi el doble.
-															<br>
-															<img style="width: 30%; display: block;" src="../img/3.png" alt="image" />
-														</td>
-													</tr>
-													<tr>
-														<td class="col-md-1 col-sm-1"><i type="button" class="fa fa-times-circle-o" align="right" style="color: rgb(255, 0, 89);"></i></td>
-														<td class="col-md-11 col-sm-11" type="button">2. Agrega el aceite y luego el yogur.
-															<br>
-															<img style="width: 30%; display: block;" src="../img/3.png" alt="image" />
-														</td>
-												</table>
+
+											<div class="col-md-6 col-sm-6 ">
+												<label class="col-form-label col-md-3 col-sm-3 ">Porciones</label>
+												<div class="col-md-9 col-sm-9 ">
+													<input type="text" id="rporcion" class="form-control"
+														placeholder="Número total de porciones">
+												</div>
 											</div>
 										</div>
 
-                                        <div class="form-group row">
+										<div class="form-group row">
 											<div class="col-md-6 col-sm-6 ">
-                                                <label class="col-form-label col-md-3 col-sm-3 ">Duración</label>
-                                                <div class="col-md-9 col-sm-9 ">
-                                                    <input type="text" class="form-control" placeholder="1 hora">
-                                                </div>                               
+												<label class="col-form-label col-md-3 col-sm-3 ">Tiempo de
+													comida</label>
+												<div class="col-md-9 col-sm-9 ">
+													<select id="rtiempo" class="form-control">
+														<option value="">Elige...</option>
+														<option value="Desayuno">Desayuno</option>
+														<option value="Almuerzo">Almuerzo</option>
+														<option value="Comida">Comida</option>
+														<option value="Merienda">Merienda</option>
+														<option value="Cena">Cena</option>
+													</select>
+												</div>
 											</div>
-                                            
-                                            <div class="col-md-6 col-sm-6 ">
-                                                <label class="col-form-label col-md-3 col-sm-3 ">Porciones</label>
-                                                <div class="col-md-9 col-sm-9 ">
-                                                    <input type="text" class="form-control" placeholder="4">
-                                                </div>                               
+
+											<div class="col-md-6 col-sm-6 ">
+												<label class="col-form-label col-md-3 col-sm-3 ">Tipo de receta</label>
+												<div class="col-md-9 col-sm-9 ">
+													<select id="rtipo" class="form-control">
+														<option value="">Elige...</option>
+														<option value="Entrada">Entrada</option>
+														<option value="Principal">Principal</option>
+														<option value="Botanas">Botanas</option>
+														<option value="Bebidas">Bebidas</option>
+														<option value="Sopas y ensaladas">Sopas y ensaladas</option>
+														<option value="Postres">Postres</option>
+														<option value="Aperitivos">Aperitivos</option>
+													</select>
+												</div>
 											</div>
 										</div>
 
-                                        <div class="form-group row">
+										<div class="form-group row"></div>
+										<div class="form-group row">
 											<div class="col-md-6 col-sm-6 ">
-                                                <label class="col-form-label col-md-3 col-sm-3 ">Tiempo de comida</label>
-                                                <div class="col-md-9 col-sm-9 ">
-                                                    <select id="unidad_medida" class="form-control">
-                                                        <option value="">Elige...</option>
-                                                        <option value="Desayuno">Desayuno</option>
-                                                        <option value="Almuerzo">Almuerzo</option>
-                                                        <option value="Comida" selected>Comida</option>
-                                                        <option value="Merienda">Merienda</option>
-                                                        <option value="Cena">Cena</option>
-                                                    </select>
-                                                </div>                               
+												<label class="col-form-label col-md-3 col-sm-3 ">Producto final</label>
+												<div class="col-md-9 col-sm-9 ">
+													<input type="file" id="rimg">
+												</div>
 											</div>
-                                            
-                                            <div class="col-md-6 col-sm-6 ">
-                                                <label class="col-form-label col-md-3 col-sm-3 ">Tipo de receta</label>
-                                                <div class="col-md-9 col-sm-9 ">
-                                                    <select id="unidad_medida" class="form-control">
-                                                        <option value="">Elige...</option>
-                                                        <option value="Entrada">Entrada</option>
-                                                        <option value="Principal">Principal</option>
-                                                        <option value="Botanas">Botanas</option>
-                                                        <option value="Bebidas">Bebidas</option>
-                                                        <option value="Sopas y ensaladas">Sopas y ensaladas</option>
-                                                        <option value="Postres" selected>Postres</option>
-                                                        <option value="Aperitivos">Aperitivos</option>
-                                                    </select>  
-                                                </div>                               
-											</div>
-										</div>
-                                        
-                                        <div class="form-group row"></div>
-                                        <div class="form-group row">
+
 											<div class="col-md-6 col-sm-6 ">
-                                                <label class="col-form-label col-md-3 col-sm-3 ">Producto final</label>
-                                                <div class="col-md-9 col-sm-9 ">
-                                                    <input type="file">
-                                                </div>                               
-											</div>
-                                            
-                                            <div class="col-md-6 col-sm-6 ">
-                                                <label class="col-form-label col-md-3 col-sm-3 "></label>
-                                                <div class="col-md-9 col-sm-9 "align="right">
-                                                    <button type="button" class="btn btn-success">Actualizar receta</button>                                                    
-                                                </div>                               
+												<label class="col-form-label col-md-3 col-sm-3 "></label>
+												<div class="col-md-9 col-sm-9 " align="right">
+													<button type="button" class="btn btn-success"
+														id="actualizar">Actualizar receta</button>
+												</div>
 											</div>
 										</div>
 									</form>
@@ -356,7 +339,15 @@
 	<!-- Custom Theme Scripts -->
 	<script src="../../gentelella-master/build/js/custom.min.js"></script>
 	<!-- Scripts para ingredientes y procedimiento -->
-	<script type="module" src="../js/ingredientes.js"></script>
-	<script type="module" src="../js/procedimiento.js"></script>
+	<!-- <script type="module" src="../js/ingredientes.js"></script> -->
+	<!-- <script type="module" src="../js/procedimiento.js"></script> -->
+	
+	<script>
+        // Obtener el valor de "idReceta" de la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const idReceta = urlParams.get("idReceta");
 
+        // Pasar el valor de "idReceta" al archivo JavaScript
+        tuFuncionEnJavaScript(idReceta);
+    </script>
 </body></html>
